@@ -6,7 +6,26 @@
     <string name="title_activity_main2">Main2Activity</string>
     <string name="what_s_on_your_mind">Enter your query</string>
     <string name="title_activity_splash">SplashActivity</string>
-
+    <string name="명신관">
+       명신 닭장이라고도 불리는 명신관(명신 서관)! 왜냐고요? 한번 점심시간이 시작되는! 수업이 끝나는 시간에 한번 계단에 있어보시는게 어때요?
+       숙대의 대부분의 학생들이 그곳에서 물같이 흘러나오는 경관을 보실 수 있게 될거에요! 명신관은 2층부터 시작되고 2층부터 6층까지의 엘리베이터가 있습니다.
+       2층에는 라운지가 있어 프린터기와 학생들이 앉아서 쉴 수 있는 라운지도 있어요.
+    </string>
+    <string name="새힘관">
+     새내기뿐만 아니라 몇년 다닌 재학생들도 줄곧 길을 해매게 하는 빌딩 중 하나에요. 새힘관은 신명신관이라고도 불리고요.
+       명신관과 연결이 되어있어요. 이 건물 아래에 미소찬이 있기도 하고요. 교수님들의 연구실이 위치해 있고요. 각 층의 작은 수의 교실들이
+       주로 위채해 있는 건물입니다! 혹시 길을 잃었다면 주변 학우를 붙잡고 물어보는건 어떨까요? 명신관과 더불어 눈송 밀집도가 높거든요!
+    </string>
+    <string name="순헌관">
+       순헌관 3층과 진리관 3층이 연결되어 있다는 사실 알고 계셨나요? 1층으로 내려와 긴 길을 걷지 않아도 된답니다!
+       6층에 컨퍼런스 홀이 있는데요! 강의실 번호(612)가 적혀있지 않아 헤매는 눈송이들이 많이 발견되곤 합니다!
+       지하에는 교직원 식당이 있어요! 미소찬에서 무엇을 먹을지 고민하고 싶지 않은 날이라면 이곳에 가보는건 어떨까요?
+       앗! 교직원 식당 앞에는 맛있는 음료를 파는 브런치 카페도 있답니다!
+      </string>
+    <string name="진리관">
+       대학원 관이라는 이름을 갖고 있기도 합니다. 주로 법대생들의 강의실이 있고요 모의 법정이 지하에 위치해 있습니다!
+       1층에는 앉아서 공부 할 수있는 라운지와 법학 도서관이 있습니다! 시험기간에는 이 둘 모두 꽉찬다는 소문이..!!
+    </string>
     <string name="title_activity_map_building">MapBuilding</string>
     <string name="title_activity_welcome">Home Screen</string>
     <string name="next">NEXT</string>

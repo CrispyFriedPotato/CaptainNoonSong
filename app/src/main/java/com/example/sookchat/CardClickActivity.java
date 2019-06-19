@@ -19,6 +19,9 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.bumptech.glide.request.transition.Transition;
+
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +33,10 @@ public class CardClickActivity extends AppCompatActivity {
         private ImageButton btnClose;
         private Button btnLike;
         private Button btnComment;
+public class CardClickActivity extends AppCompatActivity implements ViewAdapter.OnCardListener {
+
+
+    private static final String TAG = "CardClickActivity";
         private List<ImageItem> imageList = new ArrayList<ImageItem>();
         private ViewAdapter adapter;
         public static Context ccContext;
@@ -38,7 +45,7 @@ public class CardClickActivity extends AppCompatActivity {
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_cardclick);
-            ccContext=this;
+            //ccContext=this;
             Intent intent = getIntent();
             int catid = intent.getIntExtra("catid", 0);
 
@@ -48,7 +55,8 @@ public class CardClickActivity extends AppCompatActivity {
 
 
 
-            adapter = new ViewAdapter(this,imageList);
+            adapter = new ViewAdapter(ccContext,imageList,this );
+
             recyclerView.setAdapter(adapter);
 
             PagerSnapHelper snapHelper = new PagerSnapHelper();
@@ -111,4 +119,14 @@ public class CardClickActivity extends AppCompatActivity {
         });
     }
 
+
+    @Override
+    public void onCardClick(int position) {
+        Intent intent = new Intent(this, CommentActivity.class);
+        intent.putExtra("imageid", imageList.get(position).getImageid());
+        startActivity(intent);
+        Log.d(TAG,"onCardClick: clicked");
+
+
+    }
 }

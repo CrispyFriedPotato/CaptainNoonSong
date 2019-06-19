@@ -1,14 +1,24 @@
 package com.example.sookchat;
 
 public class ImageItem {
+    private int imageid;
     private int catid;
     private String filename;
     private String memo;
 
-    public ImageItem(int catid, String filename, String memo) {
+    public ImageItem(int imageid, int catid, String filename, String memo) {
+        this.imageid = imageid;
         this.catid = catid;
         this.filename = filename;
         this.memo = memo;
+    }
+
+    public int getImageid() {
+        return imageid;
+    }
+
+    public void setImageid(int imageid) {
+        this.imageid = imageid;
     }
 
     public int getCatid() {
