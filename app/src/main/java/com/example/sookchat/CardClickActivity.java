@@ -27,7 +27,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class CardClickActivity extends AppCompatActivity {
-
+        private ImageButton btnClose;
+        private Button btnLike;
+        private Button btnComment;
         private List<ImageItem> imageList = new ArrayList<ImageItem>();
         private ViewAdapter adapter;
         public static Context ccContext;
@@ -53,10 +55,34 @@ public class CardClickActivity extends AppCompatActivity {
             snapHelper.attachToRecyclerView(recyclerView);
             getDataList(catid);
 
+            btnClose= findViewById(R.id.btn_close);
+            btnLike=findViewById(R.id.btn_like);
+            btnComment=findViewById(R.id.btn_comment);
+
+            btnClose.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(CardClickActivity.this, "Like!", Toast.LENGTH_SHORT).show();
+                    onBackPressed();
+                }
+            });
+            btnLike.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(CardClickActivity.this, "Like!", Toast.LENGTH_SHORT).show();
+                }
+            });
+
 
 
         }
 
+
+    @Override
+    public void onBackPressed(){
+
+        super.onBackPressed();
+    }
 
 
     public void getDataList(int catid) {

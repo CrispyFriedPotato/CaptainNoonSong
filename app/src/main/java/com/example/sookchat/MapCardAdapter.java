@@ -75,11 +75,7 @@ public class MapCardAdapter extends RecyclerView.Adapter<MapCardAdapter.MyViewHo
             @Override
             public void onClick (View view){
                 Intent intent = new Intent(mContext, MapBuilding.class);
-
                 mContext.startActivity(new Intent(mContext, MapBuilding.class).putExtra("id", 1));
-                intent.putExtra("info", myImageNameList[1]);
-
-
             }
 
 

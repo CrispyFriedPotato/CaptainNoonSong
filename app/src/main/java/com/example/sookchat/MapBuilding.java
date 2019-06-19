@@ -26,14 +26,6 @@ public class MapBuilding extends AppCompatActivity {
         TextView txtInfo = (TextView)findViewById(R.id.textview);
 
 
-        for(int i = 0; i < 17; i++){
-            image.setImageResource(myImageList[i]);
-            title.setText(myImageNameList[i]);
-            txtInfo.setText("hi");
-        }
-
-
-
     }
 }
 
