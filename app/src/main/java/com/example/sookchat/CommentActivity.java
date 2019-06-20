@@ -24,8 +24,10 @@ import retrofit2.Response;
 public class CommentActivity extends AppCompatActivity {
 
     private static final String TAG = "CommentActivity" ;
-    private List<Comment> commentList  = new ArrayList<Comment>();
+
+    private ArrayList<Comment> commentList  = new ArrayList<Comment>();
     private CommentAdapter adapter;
+    RecyclerView recyclerView;
 
     int imageid;
     EditText addcomment;
@@ -33,24 +35,19 @@ public class CommentActivity extends AppCompatActivity {
     TextView post;
 
 
-
-    String postid;
-    String publisherid;
-
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.e(TAG,"onCreate: called.");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comment);
 
         Intent intent = getIntent();
         imageid = intent.getIntExtra("imageid", 0);
-        Log.d(TAG, "onCreate: called.");
+
         Log.d(TAG, "imageid :" + imageid);
 
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
@@ -66,6 +63,7 @@ public class CommentActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.e(TAG,"toolbar_finish()");
                 finish();
             }
         });
@@ -84,8 +82,8 @@ public class CommentActivity extends AppCompatActivity {
 
                     String comment = addcomment.getText().toString();
                     addComment(imageid, comment);
-                    commentList.clear();
-                    getCommentList();
+
+                    //getCommentList();
                 }
 
 
@@ -93,17 +91,12 @@ public class CommentActivity extends AppCompatActivity {
             }
         });
 
-
-
     }
 
-    public void onStart() {
-
-        super.onStart();
-    }
 
 
     public void getCommentList() {
+        Log.e(TAG, "getCommentList(): called.");
         RetroFitApiInterface apiInterface = RetroFitApiClient.getClient().create(RetroFitApiInterface.class);
         Call<List<Comment>> call = apiInterface.getComment(imageid);
         call.enqueue(new Callback<List<Comment>>() {
@@ -112,10 +105,11 @@ public class CommentActivity extends AppCompatActivity {
                 if (response == null) {
                     Toast.makeText(CommentActivity.this, "Somthing Went Wrong!", Toast.LENGTH_SHORT).show();
                 } else {
+
                     for (Comment comment : response.body()) {
                         commentList.add(comment);
                     }
-                    Log.i("RESPONSE: ", "" + response.toString());
+                    Log.e(TAG,"getCommentList_onResponse: "+ response.body());
                 }
                 adapter.notifyDataSetChanged();
             }
@@ -130,6 +124,7 @@ public class CommentActivity extends AppCompatActivity {
 
 
     public void addComment(int imageid, String comment) {
+        Log.e(TAG, "addComment(): called.");
         RetroFitApiInterface apiInterface = RetroFitApiClient.getClient().create(RetroFitApiInterface.class);
         Call<Comment> call = apiInterface.postComment(imageid, comment);
         call.enqueue(new Callback<Comment>() {
@@ -138,10 +133,11 @@ public class CommentActivity extends AppCompatActivity {
                 if (response == null) {
                     Toast.makeText(CommentActivity.this, "Somthing Went Wrong!", Toast.LENGTH_SHORT).show();
                 } else {
-                    Log.e(TAG,"onResponse "+response.body());
+                    Log.e(TAG,"addComment_onResponse: "+response.body());
                 }
-                adapter.notifyDataSetChanged();
                 addcomment.setText("");
+                commentList.clear();
+                getCommentList();
             }
 
             @Override
@@ -151,14 +147,6 @@ public class CommentActivity extends AppCompatActivity {
             }
         });
     }
-
-    /**
-
-     public void onButtonClick(int position) {
-     Log.d(TAG,"onBtnClick: clicked." + position);
-
-     }**/
-
 
 
 

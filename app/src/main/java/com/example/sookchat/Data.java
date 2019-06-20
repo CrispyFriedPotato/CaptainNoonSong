@@ -73,5 +73,14 @@ public class Data {
         }
     };
 
-
+    @Override
+    public String toString() {
+        return "Data{" +
+                "catid=" + catid +
+                ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", filename='" + filename + '\'' +
+                ", views='" + views + '\'' +
+                '}';
+    }
 }

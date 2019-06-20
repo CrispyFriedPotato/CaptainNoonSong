@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +30,8 @@ import static com.example.sookchat.RetroFitApiClient.IMAGE_DIR;
 
 public class ViewAdapter extends RecyclerView.Adapter<ViewAdapter.ViewHolder> {
 
-    private final List<ImageItem> imageList;
+    private static final String TAG = "ViewAdapter";
+;    private final List<ImageItem> imageList;
     private Context vContext;
     private OnCardListener mOnCardListener;
 
@@ -37,16 +39,18 @@ public class ViewAdapter extends RecyclerView.Adapter<ViewAdapter.ViewHolder> {
 
 
 
-    public ViewAdapter(Context vContext, List<ImageItem> imagelist, OnCardListener onCardListener){
+    public ViewAdapter(Context vContext, List<ImageItem> imagelist){
+        Log.e(TAG,"ViewAdapter: called.");
 
         this.vContext=vContext;
         this.imageList = imagelist;
-        this.mOnCardListener = onCardListener;
+
 
     }
 
 
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+
         TextView memo;
         ImageView viewimage;
         ImageButton btnClose;
@@ -54,38 +58,44 @@ public class ViewAdapter extends RecyclerView.Adapter<ViewAdapter.ViewHolder> {
         Button btnComment;
         OnCardListener onCardListener;
 
-        public ViewHolder(View itemView, OnCardListener onCardListener){
+        public ViewHolder(View itemView){
+
             super(itemView);
+            Log.e(TAG,"ViewHolder: called.");
             memo = itemView.findViewById(R.id.view_memo);
             viewimage = itemView.findViewById(R.id.view_image);
             btnClose = itemView.findViewById(R.id.btn_close);
             btnLike=itemView.findViewById(R.id.btn_like);
-            btnComment=itemView.findViewById(R.id.btn_comment);
-            this.onCardListener = onCardListener;
-            itemView.setOnClickListener(this);
+            btnComment=(Button)itemView.findViewById(R.id.btn_comment);
+
 
         }
 
-        @Override
-        public void onClick(View view) {
-            onCardListener.onCardClick(getAdapterPosition());
-        }
     }
+
+
+   public void setOnClickListener(OnCardListener onCardListener){
+        mOnCardListener = onCardListener;
+   }
 
     public interface OnCardListener{
         void onCardClick(int position);
+
+        void onCardDelete();
     }
 
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        Log.e(TAG,"onCreateViewHolder: called.");
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_card,parent,false);
-        return new ViewHolder(view, mOnCardListener);
+        return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
+        Log.e(TAG,"onBindViewHolder: called.");
 
         final ImageItem imageitem = imageList.get(position);
         holder.memo.setText(imageitem.getMemo());
@@ -98,9 +108,10 @@ public class ViewAdapter extends RecyclerView.Adapter<ViewAdapter.ViewHolder> {
 
         holder.btnClose.setOnClickListener(new View.OnClickListener(){
             @Override
-            public void onClick(View v){
+            public void onClick(View view){
 
-                ((Activity)ccContext).finish();
+                //((Activity)ccContext).finish();
+                mOnCardListener.onCardDelete();
             }
         });
 

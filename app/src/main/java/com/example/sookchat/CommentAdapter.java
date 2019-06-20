@@ -29,6 +29,7 @@ class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHolder> {
 
 
     public CommentAdapter(Context mContext, List<Comment> mComment){
+        Log.e(TAG,"CommentAdapter: called.");
         this.mContext = mContext;
         this.mComment = mComment;
 
@@ -44,6 +45,7 @@ class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHolder> {
 
         public ViewHolder(View itemView){
             super(itemView);
+            Log.e(TAG,"ViewHolder: called.");
             image_profile = itemView.findViewById(R.id.image_profile);
             comment = itemView.findViewById(R.id.comment);
             deletebtn = itemView.findViewById(R.id.delete_btn);
@@ -57,13 +59,14 @@ class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHolder> {
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
 
+        Log.e(TAG,"onCreateViewHolder: called.");
         View view = LayoutInflater.from(mContext).inflate(R.layout.comment_item, viewGroup, false);
         return new CommentAdapter.ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
-
+        Log.e(TAG,"onBindViewHolder: called.");
         Comment comment = mComment.get(position);
         holder.comment.setText(comment.getComment());
 

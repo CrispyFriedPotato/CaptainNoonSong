@@ -44,4 +44,14 @@ public class ImageItem {
     public void setMemo(String memo) {
         this.memo = memo;
     }
+
+    @Override
+    public String toString() {
+        return "ImageItem{" +
+                "imageid=" + imageid +
+                ", catid=" + catid +
+                ", filename='" + filename + '\'' +
+                ", memo='" + memo + '\'' +
+                '}';
+    }
 }
