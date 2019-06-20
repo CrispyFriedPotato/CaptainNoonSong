@@ -16,13 +16,13 @@
             android:id="@+id/imageview_header"
             android:layout_width="match_parent"
             android:layout_height="355dp"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"/>
 
         <TextView
             android:id="@+id/textview_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#1DA1F2"
+            android:background="#CEE3F6"
             android:maxLines="2"
             android:padding="16dp"
             android:textAppearance="@android:style/TextAppearance.Material.Title"

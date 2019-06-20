@@ -126,6 +126,7 @@ public class ChatbotFragment extends Fragment {
             case R.id.action_develop:
                     Intent developIntent = new Intent(getActivity(),developActivity.class);
                     startActivity(developIntent);
+                    break;
             case R.id.action_mail:
                 Intent Email = new Intent(Intent.ACTION_SEND);
                 Email.setType("text/email");
