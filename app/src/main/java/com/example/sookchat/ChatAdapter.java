@@ -120,7 +120,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
            cContext.startActivity(intent);
         }
       });
-
+      ((ViewHolder) holder).timeText.setText(message.getCreatedAt());
     }
     else {
       message.setMessage(message.getMessage());

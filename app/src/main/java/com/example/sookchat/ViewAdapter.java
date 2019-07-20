@@ -31,7 +31,7 @@ import static com.example.sookchat.RetroFitApiClient.IMAGE_DIR;
 public class ViewAdapter extends RecyclerView.Adapter<ViewAdapter.ViewHolder> {
 
     private static final String TAG = "ViewAdapter";
-;    private final List<ImageItem> imageList;
+    ;    private final List<ImageItem> imageList;
     private Context vContext;
     private OnCardListener mOnCardListener;
 
@@ -74,14 +74,15 @@ public class ViewAdapter extends RecyclerView.Adapter<ViewAdapter.ViewHolder> {
     }
 
 
-   public void setOnClickListener(OnCardListener onCardListener){
+    public void setOnClickListener(OnCardListener onCardListener){
         mOnCardListener = onCardListener;
-   }
+    }
 
     public interface OnCardListener{
         void onCardClick(int position);
 
         void onCardDelete();
+        void onClickLike();
     }
 
 
@@ -119,7 +120,7 @@ public class ViewAdapter extends RecyclerView.Adapter<ViewAdapter.ViewHolder> {
             @Override
             public void onClick(View v){
 
-                Toast.makeText(vContext, "LIKE!", Toast.LENGTH_LONG).show();
+                mOnCardListener.onClickLike();
 
             }
         });
@@ -127,7 +128,7 @@ public class ViewAdapter extends RecyclerView.Adapter<ViewAdapter.ViewHolder> {
         holder.btnComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               mOnCardListener.onCardClick(position);
+                mOnCardListener.onCardClick(position);
             }
         });
 
@@ -137,7 +138,6 @@ public class ViewAdapter extends RecyclerView.Adapter<ViewAdapter.ViewHolder> {
     public int getItemCount() {
         return imageList.size();
     }
-
 
 
 

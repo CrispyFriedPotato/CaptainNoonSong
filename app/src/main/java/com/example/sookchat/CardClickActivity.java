@@ -31,81 +31,64 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class CardClickActivity extends AppCompatActivity {
-        private ImageButton btnClose;
-        private Button btnLike;
-        private Button btnComment;
 public class CardClickActivity extends AppCompatActivity implements ViewAdapter.OnCardListener {
 
 
     private static final String TAG = "CardClickActivity";
-        private List<ImageItem> imageList = new ArrayList<ImageItem>();
-        private ViewAdapter adapter;
-        private RecyclerView recyclerView;
-        public static Context ccContext;
-        int catid;
+    private List<ImageItem> imageList = new ArrayList<ImageItem>();
+    private ViewAdapter adapter;
+    private RecyclerView recyclerView;
+    public static Context ccContext;
+    int catid;
 
 
-        protected void onCreate(Bundle savedInstanceState) {
-            Log.e(TAG,"onCreate: called.");
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_cardclick);
-            Intent intent = getIntent();
-            catid = intent.getIntExtra("catid", 0);
+    protected void onCreate(Bundle savedInstanceState) {
+        Log.e(TAG,"onCreate: called.");
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_cardclick);
+        Intent intent = getIntent();
+        catid = intent.getIntExtra("catid", 0);
 
-            recyclerView = (RecyclerView) findViewById(R.id.view_recycler);
-            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-            recyclerView.setLayoutManager(layoutManager);
-
-
-
-            adapter = new ViewAdapter(ccContext,imageList);
-            adapter.setOnClickListener(this);
-            recyclerView.setAdapter(adapter);
-
-            PagerSnapHelper snapHelper = new PagerSnapHelper();
-            snapHelper.attachToRecyclerView(recyclerView);
-            getDataList(catid);
-
-            btnClose= findViewById(R.id.btn_close);
-            btnLike=findViewById(R.id.btn_like);
-            btnComment=findViewById(R.id.btn_comment);
-
-            btnClose.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(CardClickActivity.this, "Like!", Toast.LENGTH_SHORT).show();
-                    onBackPressed();
-                }
-            });
-            btnLike.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(CardClickActivity.this, "Like!", Toast.LENGTH_SHORT).show();
-                }
-            });
-
-
-        }
-
-
-        public void onStart() {
-            Log.e(TAG,"onStart: called.");
-            super.onStart();
-        }
-
-        public void onResume() {
-            Log.e(TAG,"onResume: called.");
-            super.onResume();
-        }
+        recyclerView = (RecyclerView) findViewById(R.id.view_recycler);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        recyclerView.setLayoutManager(layoutManager);
 
 
 
-    @Override
-    public void onBackPressed(){
+        adapter = new ViewAdapter(ccContext,imageList);
+        adapter.setOnClickListener(this);
+        recyclerView.setAdapter(adapter);
 
-        super.onBackPressed();
+        PagerSnapHelper snapHelper = new PagerSnapHelper();
+        snapHelper.attachToRecyclerView(recyclerView);
+        getDataList(catid);
+
+
+
+
+
+
+
+
+
+
     }
+
+
+
+
+
+    public void onStart() {
+        Log.e(TAG,"onStart: called.");
+        super.onStart();
+    }
+
+    public void onResume() {
+        Log.e(TAG,"onResume: called.");
+        super.onResume();
+    }
+
+
 
 
     public void getDataList(int catid) {
@@ -145,6 +128,10 @@ public class CardClickActivity extends AppCompatActivity implements ViewAdapter.
     }
 
     public void onCardDelete(){
-            finish();
+        finish();
+    }
+
+    public void onClickLike(){
+        Toast.makeText(ccContext, "LIKE!", Toast.LENGTH_LONG).show();
     }
 }
