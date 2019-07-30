@@ -3,20 +3,28 @@ package com.example.sookchat;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements FragmentReplaceable {
 
     // FrameLayout에 각 메뉴의 Fragment를 바꿔 줌
     private FragmentManager fragmentManager = getSupportFragmentManager();
     // 4개의 메뉴에 들어갈 Fragment들
     private AgoraFragment agoraFragment = new AgoraFragment();
     private ChatbotFragment chatbotFragment = new ChatbotFragment();
+    private Map_Select map_select = new Map_Select();
+
+    private Tour_Select tourFragment = new Tour_Select();
+    private Route_Select routeFragment = new Route_Select();
     private MapFragment mapFragment = new MapFragment();
+
+
+
 
 
     @Override
@@ -48,7 +56,8 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     }
                     case R.id.navigation_menu3: {
-                        transaction.replace(R.id.frame_layout, mapFragment).commitAllowingStateLoss();
+                        transaction.replace(R.id.frame_layout, map_select).commitAllowingStateLoss();
+                        //transaction.replace(R.id.frame_layout, mapFragment).commitAllowingStateLoss();
                         break;
                     }
                 }
@@ -56,5 +65,26 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+    }
+
+    public void replaceFragment(int fragmentId){
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+        if(fragmentId ==1){
+            transaction.replace(R.id.frame_layout, tourFragment);
+        }
+        if(fragmentId ==2){
+            transaction.replace(R.id.frame_layout, routeFragment);
+        }
+        if(fragmentId ==3){
+            transaction.replace(R.id.frame_layout, mapFragment);
+        }
+
+        //Back 버튼 클릭 시 이전 프래그먼트로 이동시키도록 한다.
+        transaction.addToBackStack(null);
+
+
+        //fragment의 변경사항을 반영시킨다.
+        transaction.commit();
     }
 }
