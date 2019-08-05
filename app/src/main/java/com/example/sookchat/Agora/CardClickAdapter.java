@@ -1,4 +1,4 @@
-package com.example.sookchat;
+package com.example.sookchat.Agora;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -7,12 +7,12 @@ import android.support.v4.app.FragmentPagerAdapter;
 import java.util.ArrayList;
 //it is for CardClickActivity Image Slider
 
-public class FragmentAdapter extends FragmentPagerAdapter {
+public class CardClickAdapter extends FragmentPagerAdapter {
     // ViewPager에 들어갈 Fragment들을 담을 리스트
     private ArrayList<Fragment> fragments = new ArrayList<>();
 
     // 필수 생성자
-    FragmentAdapter(FragmentManager fm) {
+    CardClickAdapter(FragmentManager fm) {
         super(fm);
     }
 

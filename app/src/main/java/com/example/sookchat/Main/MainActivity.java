@@ -1,14 +1,23 @@
-package com.example.sookchat;
+package com.example.sookchat.Main;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
+
+import com.example.sookchat.Agora.AgoraFragment;
+import com.example.sookchat.FragmentReplaceable;
+import com.example.sookchat.Main.SplashActivity;
+import com.example.sookchat.MapFragment;
+import com.example.sookchat.Map_Select;
+import com.example.sookchat.R;
+import com.example.sookchat.Route_Select;
+import com.example.sookchat.Tour_Select;
+import com.example.sookchat.Watson.ChatbotFragment;
 
 public class MainActivity extends AppCompatActivity implements FragmentReplaceable {
 
@@ -22,9 +31,6 @@ public class MainActivity extends AppCompatActivity implements FragmentReplaceab
     private Tour_Select tourFragment = new Tour_Select();
     private Route_Select routeFragment = new Route_Select();
     private MapFragment mapFragment = new MapFragment();
-
-
-
 
 
     @Override

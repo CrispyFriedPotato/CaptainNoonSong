@@ -1,10 +1,9 @@
-package com.example.sookchat;
+package com.example.sookchat.Agora;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -13,6 +12,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.sookchat.Data.Comment;
+import com.example.sookchat.R;
+import com.example.sookchat.Retrofit.RetroFitApiClient;
+import com.example.sookchat.Retrofit.RetroFitApiInterface;
 
 import java.util.ArrayList;
 import java.util.List;

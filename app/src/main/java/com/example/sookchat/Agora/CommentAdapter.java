@@ -1,4 +1,4 @@
-package com.example.sookchat;
+package com.example.sookchat.Agora;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -9,14 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.example.sookchat.Data.Comment;
+import com.example.sookchat.R;
 
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
 
 
 class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHolder> {

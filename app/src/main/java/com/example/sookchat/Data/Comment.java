@@ -1,4 +1,4 @@
-package com.example.sookchat;
+package com.example.sookchat.Data;
 
 public class Comment {
     int imageid;

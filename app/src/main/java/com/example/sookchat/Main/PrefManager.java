@@ -1,4 +1,4 @@
-package com.example.sookchat;
+package com.example.sookchat.Main;
 
 import android.content.Context;
 import android.content.SharedPreferences;

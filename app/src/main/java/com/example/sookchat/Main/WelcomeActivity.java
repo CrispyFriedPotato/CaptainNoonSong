@@ -1,4 +1,4 @@
-package com.example.sookchat;
+package com.example.sookchat.Main;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -16,6 +16,8 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.example.sookchat.R;
 
 public class WelcomeActivity extends AppCompatActivity {
 

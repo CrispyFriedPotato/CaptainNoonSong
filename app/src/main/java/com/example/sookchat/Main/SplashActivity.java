@@ -1,4 +1,4 @@
-package com.example.sookchat;
+package com.example.sookchat.Main;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -7,6 +7,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+
+import com.example.sookchat.R;
 
 public class SplashActivity extends AppCompatActivity {
 

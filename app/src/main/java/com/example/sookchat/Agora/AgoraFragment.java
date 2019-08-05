@@ -1,4 +1,4 @@
-package com.example.sookchat;
+package com.example.sookchat.Agora;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -22,13 +21,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.sookchat.Data;
-import com.example.sookchat.MyRecyclerAdapter;
+import com.example.sookchat.Data.Data;
 import com.example.sookchat.R;
-import com.example.sookchat.RetroFitApiClient;
-import com.example.sookchat.RetroFitApiInterface;
+import com.example.sookchat.Retrofit.RetroFitApiClient;
+import com.example.sookchat.Retrofit.RetroFitApiInterface;
 
-import java.sql.SQLData;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -42,7 +39,7 @@ public class AgoraFragment extends Fragment {
     private SearchView searchView = null;
     private SearchView.OnQueryTextListener queryTextListener;
     private RecyclerView recycler_view;
-    private MyRecyclerAdapter myAdapter;
+    private AgoraAdapter myAdapter;
     private List<Data> dataList = new ArrayList<Data>();
 
 
@@ -95,7 +92,7 @@ public class AgoraFragment extends Fragment {
     public void onStart(){
         dataList.clear();
         getDataList();
-        myAdapter = new MyRecyclerAdapter(getActivity(),dataList);
+        myAdapter = new AgoraAdapter(getActivity(),dataList);
         recycler_view.setAdapter(myAdapter);
         super.onStart();
     }
@@ -120,7 +117,7 @@ public class AgoraFragment extends Fragment {
                         dataList.add(data);
                     }
 
-                    myAdapter = new MyRecyclerAdapter(getActivity(),dataList);
+                    myAdapter = new AgoraAdapter(getActivity(),dataList);
                     recycler_view.setAdapter(myAdapter);
 
                     Log.i("RESPONSE: ", ""+response.toString());

@@ -4,35 +4,25 @@
     android:layout_height="match_parent"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
-    android:orientation="vertical" >
+    android:orientation="horizontal" >
+
     <Spinner
         android:id="@+id/spinner_start"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:drawable/btn_dropdown"
         android:spinnerMode="dropdown" />
+
     <Spinner
         android:id="@+id/spinner_destination"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/spinner_start"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="350dp"
+        android:layout_marginBottom="281dp"
         android:background="@android:drawable/btn_dropdown"
-        android:spinnerMode="dropdown"/>
-
-
-    <FrameLayout
-        android:id="@+id/map_preview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/rounded"
-        android:layout_below="@+id/spinner_destination">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="573dp"
-            android:layout_alignStart="@+id/map_preview"
-            android:src="@drawable/example_should_delete_later" />
-    </FrameLayout>
+        android:spinnerMode="dropdown" />
 
 
 </RelativeLayout>

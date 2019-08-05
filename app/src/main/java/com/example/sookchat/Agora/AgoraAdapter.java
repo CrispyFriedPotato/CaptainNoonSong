@@ -1,9 +1,8 @@
-package com.example.sookchat;
+package com.example.sookchat.Agora;
 
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,23 +14,20 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.example.sookchat.CardClickActivity;
-import com.example.sookchat.Data;
-import com.example.sookchat.Data;
+import com.example.sookchat.Data.Data;
 import com.example.sookchat.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.sookchat.RetroFitApiClient.BASE_URL;
-import static com.example.sookchat.RetroFitApiClient.IMAGE_DIR;
+import static com.example.sookchat.Retrofit.RetroFitApiClient.IMAGE_DIR;
 
-public class MyRecyclerAdapter extends RecyclerView.Adapter<MyRecyclerAdapter.ViewHolder> {
+public class AgoraAdapter extends RecyclerView.Adapter<AgoraAdapter.ViewHolder> {
     private List<Data> mDataList;
     private List<Data> mFilteredList;
     private Context mContext;
 
-    public MyRecyclerAdapter(Context mContext, List<Data> mData) {
+    public AgoraAdapter(Context mContext, List<Data> mData) {
 
         this.mContext = mContext;
         this.mDataList = mData;

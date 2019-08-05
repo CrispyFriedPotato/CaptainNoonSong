@@ -11,6 +11,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.sookchat.Retrofit.RetroFitApiClient;
+import com.example.sookchat.Retrofit.RetroFitApiInterface;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +21,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static com.example.sookchat.RetroFitApiClient.MAP_DIR;
+import static com.example.sookchat.Retrofit.RetroFitApiClient.MAP_DIR;
 
 public class MapBuilding extends AppCompatActivity {
 

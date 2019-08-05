@@ -1,11 +1,8 @@
-package com.example.sookchat;
+package com.example.sookchat.Watson;
 
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Typeface;
-import android.graphics.drawable.GradientDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -17,10 +14,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.ImageView;
 import com.bumptech.glide.Glide;
+import com.example.sookchat.R;
 
 import java.util.ArrayList;
-
-import static com.example.sookchat.CardClickActivity.ccContext;
 
 public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 

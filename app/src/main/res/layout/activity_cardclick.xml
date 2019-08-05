@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#A1000000"
-    tools:context="com.example.sookchat.CardClickActivity"
+    tools:context="com.example.sookchat.Agora.CardClickActivity"
     android:id="@+id/layout_cardclick">
 
     <android.support.v7.widget.RecyclerView

@@ -1,8 +1,10 @@
-package com.example.sookchat;
+package com.example.sookchat.Main;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ListView;
+
+import com.example.sookchat.R;
 
 import java.util.ArrayList;
 

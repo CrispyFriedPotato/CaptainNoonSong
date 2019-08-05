@@ -1,10 +1,12 @@
-package com.example.sookchat;
+package com.example.sookchat.Watson;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.example.sookchat.R;
+import com.example.sookchat.Watson.WatsonActivity;
 
 public class ImageViewActivity extends AppCompatActivity {
 

@@ -1,5 +1,10 @@
-package com.example.sookchat;
+package com.example.sookchat.Retrofit;
 
+
+import com.example.sookchat.Data.Comment;
+import com.example.sookchat.Data.Data;
+import com.example.sookchat.Data.ImageItem;
+import com.example.sookchat.MapItem;
 
 import java.util.List;
 

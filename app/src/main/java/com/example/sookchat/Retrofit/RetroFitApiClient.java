@@ -1,4 +1,4 @@
-package com.example.sookchat;
+package com.example.sookchat.Retrofit;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

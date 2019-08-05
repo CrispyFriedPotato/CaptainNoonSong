@@ -14,7 +14,7 @@
     app:cardCornerRadius="6dp"
     app:cardElevation="8dp"
     android:background="#000000"
-    tools:context=".CardClickActivity"
+    tools:context=".Agora.CardClickActivity"
     >
 
     <LinearLayout

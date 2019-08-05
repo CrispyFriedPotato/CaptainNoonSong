@@ -1,4 +1,4 @@
-package com.example.sookchat;
+package com.example.sookchat.Watson;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.example.sookchat.R;
 
 
 public class ImageFragment extends Fragment {

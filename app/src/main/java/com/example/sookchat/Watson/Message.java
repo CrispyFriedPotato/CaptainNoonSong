@@ -1,4 +1,4 @@
-package com.example.sookchat;
+package com.example.sookchat.Watson;
 
 
 import java.io.Serializable;

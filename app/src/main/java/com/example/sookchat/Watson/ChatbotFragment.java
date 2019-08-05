@@ -1,7 +1,5 @@
-package com.example.sookchat;
+package com.example.sookchat.Watson;
 
-import android.app.SearchManager;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,9 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,11 +15,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
 import android.widget.ImageButton;
 
-import java.net.URL;
+import com.example.sookchat.R;
+import com.example.sookchat.Main.developActivity;
 
 public class ChatbotFragment extends Fragment {
 
@@ -51,7 +46,7 @@ public class ChatbotFragment extends Fragment {
 
             @Override
             public void onClick(View v){
-                    Intent intent0 = new Intent(getActivity(),WatsonActivity.class);
+                    Intent intent0 = new Intent(getActivity(), WatsonActivity.class);
                     startActivity(intent0);
             }
 
@@ -124,7 +119,7 @@ public class ChatbotFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()) {
             case R.id.action_develop:
-                    Intent developIntent = new Intent(getActivity(),developActivity.class);
+                    Intent developIntent = new Intent(getActivity(), developActivity.class);
                     startActivity(developIntent);
                     break;
             case R.id.action_mail:
