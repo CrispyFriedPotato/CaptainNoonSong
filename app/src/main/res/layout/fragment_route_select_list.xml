@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/route_select">
+xmlns:app="http://schemas.android.com/apk/res-auto"
+android:orientation="vertical"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+    android:id="@+id/route_select_list">
+
+
 
     <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:background="@color/actionbar_opacity"
-        android:paddingTop="13dp">
-
+    android:id="@+id/route_list"
+    android:layout_width="match_parent"
+    android:layout_height="70dp"
+    android:background="@color/actionbar_opacity"
+    android:paddingTop="13dp">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
@@ -21,6 +23,12 @@
             android:background="@drawable/rounded"
             app:theme="@style/TransparentToolbar">
 
+            <ImageView
+                android:id="@+id/backarrow"
+                android:layout_width="25dp"
+                android:layout_height="39dp"
+                app:srcCompat="@drawable/back" />
+
             <TextView
                 android:id="@+id/toolbar_title"
                 android:layout_width="match_parent"
@@ -28,21 +36,17 @@
                 android:layout_gravity="left"
                 android:fontFamily="casual"
                 android:text="건물 검색"
-                android:textAlignment="viewStart"
                 android:textAllCaps="false"
                 android:textColor="#D3D3D3"
                 android:textSize="20sp" />
 
         </android.support.v7.widget.Toolbar>
 
-    </android.support.design.widget.AppBarLayout>
+</android.support.design.widget.AppBarLayout>
 
-<fragment
-xmlns:android="http://schemas.android.com/apk/res/android"
-android:id="@+id/route_map"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-android:name="com.naver.maps.map.MapFragment"
-    />
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 
 </LinearLayout>

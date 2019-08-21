@@ -12,7 +12,11 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:navermap_latitude="37.545088"
+        app:navermap_longitude="126.964576"
+        app:navermap_zoom="17"
+        app:navermap_mapType="Terrain">
     </com.naver.maps.map.MapView>
 
     <com.naver.maps.map.widget.LocationButtonView
