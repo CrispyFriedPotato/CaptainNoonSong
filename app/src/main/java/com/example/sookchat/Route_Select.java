@@ -1,120 +1,253 @@
 package com.example.sookchat;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.location.LocationManager;
+import android.content.Context;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.Spinner;
-import android.widget.Toast;
 
-import static android.content.Context.LOCATION_SERVICE;
+import com.example.sookchat.Main.MainActivity;
+
+import org.osmdroid.api.IMapController;
+import org.osmdroid.config.Configuration;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.CopyrightOverlay;
 
 
 public class Route_Select extends Fragment {
-    private Spinner spinner1;
-    private Spinner spinner2;
-    private static final String[] schools = new String[]{"새힘관", "명신관", "진리관","순헌관","학생회관","행정관","수련관","행파관","이과대학","중앙 도서회관","사회 교육관","미술 대학","약학 대학","백주년 기념관","음악 대학"};
+
+
+    private static int MENU_LAST_ID = Menu.FIRST; // Always set to last unused id
+    public static final String TAG = "osmBaseFrag";
+
+    //public abstract String getSampleTitle();
+
     public Route_Select() {
         // Required empty public constructor
     }
+    protected MapView mMapView;
 
-    public static Route_Select newInstance(String param1, String param2) {
-        Route_Select fragment = new Route_Select();
-
-        return fragment;
+    public MapView getmMapView() {
+        return mMapView;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       }
-
-    private void gpsCheck() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage("계속하려면 위치 기능 설정이 필요합니다.")
-                .setCancelable(false)
-                .setPositiveButton("확인",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                turnOnGps();
-                            }
-                        })
-                .setNegativeButton("아니요",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        });
-        AlertDialog alert = builder.create();
-        alert.show();
-    }
-
-    // show GPS Options
-    private void turnOnGps() {
-        Intent gpsOptionsIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-        startActivity(gpsOptionsIntent);
+        Log.d(TAG, "onCreate");
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        LocationManager locationManager = (LocationManager)getActivity().getSystemService(LOCATION_SERVICE);
-        if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            gpsCheck();
+        View v = inflater.inflate(R.layout.fragment_route_select,container,false);
+        mMapView = v.findViewById(R.id.route_select_map);
+        Context ctx = getActivity().getApplicationContext();
+        //important! set your user agent to prevent getting banned from the osm servers
+        Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
+        Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
+
+
+        IMapController mapController = mMapView.getController();
+        mapController.setZoom(17.5);
+        GeoPoint startPoint = new GeoPoint(37.545128, 126.964523);
+        mapController.setCenter(startPoint);
+
+        //toolbar
+        Toolbar toolbar = (Toolbar)v.findViewById(R.id.toolbar);
+        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        toolbar.findViewById(R.id.toolbar_title).setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                ((MainActivity)getActivity()).replaceFragment(4);
+            }
+        });
+
+        return v;
+    }
+
+    @Override
+    public void onPause(){
+        if (mMapView != null) {
+            mMapView.onPause();
         }
-
-
-        View view = inflater.inflate(R.layout.fragment_route_select,container,false);
-
-        spinner1= (Spinner)view.findViewById(R.id.spinner_start);
-        ArrayAdapter<String> adapter1 = new ArrayAdapter<String>(getActivity(),
-                android.R.layout.simple_spinner_item,schools);
-        adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner1.setAdapter(adapter1);
-        spinner1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                Toast.makeText(getActivity(),Integer.toString(position),Toast.LENGTH_SHORT);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-        spinner2 = (Spinner)view.findViewById(R.id.spinner_destination);
-        ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(getActivity(),
-                android.R.layout.simple_spinner_item,schools);
-        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        //spinner2.setPrompt("도착 장소 선택");
-        spinner2.setAdapter(adapter2);
-        spinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                Toast.makeText(getActivity(),Integer.toString(position),Toast.LENGTH_SHORT);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-        //spinner.setOnItemSelectedListener(getActivity());
-        // Inflate the layout for this fragment
-        return view;
+        super.onPause();
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        if (mMapView != null) {
+            mMapView.onResume();
+        }
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Log.d(TAG, "onActivityCreated");
 
+        if (mMapView != null) {
+            addOverlays();
+
+            final Context context = this.getActivity();
+            final DisplayMetrics dm = context.getResources().getDisplayMetrics();
+
+            CopyrightOverlay copyrightOverlay = new CopyrightOverlay(getActivity());
+            copyrightOverlay.setTextSize(10);
+
+            mMapView.getOverlays().add(copyrightOverlay);
+            mMapView.setMultiTouchControls(true);
+            mMapView.setTilesScaledToDpi(true);
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.d(TAG, "onDetach");
+        if (mMapView != null)
+            mMapView.onDetach();
+        mMapView = null;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy");
+
+    }
+
+    int MENU_VERTICAL_REPLICATION = 0;
+    int MENU_HORIZTONAL_REPLICATION = 0;
+    int MENU_ROTATE_CLOCKWISE = 0;
+    int MENU_ROTATE_COUNTER_CLOCKWISE = 0;
+    int MENU_SCALE_TILES = 0;
+
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        MenuItem add = menu.add("Run Tests");
+        MENU_LAST_ID++;
+        MENU_VERTICAL_REPLICATION = MENU_LAST_ID;
+        menu.add(0, MENU_VERTICAL_REPLICATION, Menu.NONE, "Vertical Replication").setCheckable(true);
+        MENU_LAST_ID++;
+        MENU_HORIZTONAL_REPLICATION = MENU_LAST_ID;
+        menu.add(0, MENU_HORIZTONAL_REPLICATION, Menu.NONE, "Horizontal Replication").setCheckable(true);
+
+        MENU_LAST_ID++;
+        MENU_SCALE_TILES = MENU_LAST_ID;
+        menu.add(0, MENU_SCALE_TILES, Menu.NONE, "Scale Tiles").setCheckable(true);
+
+        MENU_LAST_ID++;
+        MENU_ROTATE_CLOCKWISE = MENU_LAST_ID;
+        menu.add(0, MENU_ROTATE_CLOCKWISE, Menu.NONE, "Rotate Clockwise");
+
+        MENU_LAST_ID++;
+        MENU_ROTATE_COUNTER_CLOCKWISE = MENU_LAST_ID;
+        menu.add(0, MENU_ROTATE_COUNTER_CLOCKWISE, Menu.NONE, "Rotate Counter Clockwise");
+        // Put overlay items first
+        try {
+            mMapView.getOverlayManager().onCreateOptionsMenu(menu, MENU_LAST_ID, mMapView);
+        } catch (NullPointerException npe) {
+            //can happen during CI tests and very rapid fragment switching
+        }
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        try {
+            MenuItem item = menu.findItem(MENU_VERTICAL_REPLICATION);
+            item.setChecked(mMapView.isVerticalMapRepetitionEnabled());
+            item = menu.findItem(MENU_HORIZTONAL_REPLICATION);
+            item.setChecked(mMapView.isHorizontalMapRepetitionEnabled());
+
+            item = menu.findItem(MENU_SCALE_TILES);
+            item.setChecked(mMapView.isTilesScaledToDpi());
+            mMapView.getOverlayManager().onPrepareOptionsMenu(menu, MENU_LAST_ID, mMapView);
+        } catch (NullPointerException npe) {
+            //can happen during CI tests and very rapid fragment switching
+        }
+        super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getTitle().toString().equals("Run Tests")) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        runTestProcedures();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
+            return true;
+        } else if (item.getItemId() == MENU_HORIZTONAL_REPLICATION) {
+            mMapView.setHorizontalMapRepetitionEnabled(!mMapView.isHorizontalMapRepetitionEnabled());
+            mMapView.invalidate();
+            return true;
+        } else if (item.getItemId() == MENU_VERTICAL_REPLICATION) {
+            mMapView.setVerticalMapRepetitionEnabled(!mMapView.isVerticalMapRepetitionEnabled());
+            mMapView.invalidate();
+            return true;
+        } else if (item.getItemId() == MENU_SCALE_TILES) {
+            mMapView.setTilesScaledToDpi(!mMapView.isTilesScaledToDpi());
+            mMapView.invalidate();
+            return true;
+        } else if (item.getItemId() == MENU_ROTATE_CLOCKWISE){
+            float currentRotation = mMapView.getMapOrientation() + 10;
+            if (currentRotation > 360)
+                currentRotation = currentRotation-360;
+            mMapView.setMapOrientation(currentRotation, true);
+
+            return true;
+        } else if (item.getItemId() == MENU_ROTATE_COUNTER_CLOCKWISE){
+            float currentRotation = mMapView.getMapOrientation() - 10;
+            if (currentRotation < 0)
+                currentRotation = currentRotation + 360;
+            mMapView.setMapOrientation(currentRotation, true);
+            return true;
+        } else if (mMapView.getOverlayManager().onOptionsItemSelected(item, MENU_LAST_ID, mMapView)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * An appropriate place to override and add overlays.
+     */
+    protected void addOverlays() {
+        //
+    }
+
+    public boolean skipOnCiTests() {
+        return true;
+    }
+
+    /**
+     * optional place to put automated test procedures, used during the connectCheck tests
+     * this is called OFF of the UI thread. block this method call util the test is done
+     */
+    public void runTestProcedures() throws Exception {
+
+    }
+}
 

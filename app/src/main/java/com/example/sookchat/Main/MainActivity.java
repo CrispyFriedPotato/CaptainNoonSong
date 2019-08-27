@@ -3,6 +3,7 @@ package com.example.sookchat.Main;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +17,7 @@ import com.example.sookchat.MapFragment;
 import com.example.sookchat.Map_Select;
 import com.example.sookchat.R;
 import com.example.sookchat.Route_Select;
+import com.example.sookchat.Route_Select_list;
 import com.example.sookchat.Tour_Select;
 import com.example.sookchat.Watson.ChatbotFragment;
 
@@ -84,6 +86,14 @@ public class MainActivity extends AppCompatActivity implements FragmentReplaceab
         }
         if(fragmentId ==3){
             transaction.replace(R.id.frame_layout, mapFragment);
+        }
+        if(fragmentId==4){
+            //from route_select to route_select_list
+            transaction.replace(R.id.frame_layout,new Route_Select_list());
+        }
+        if(fragmentId==5){
+            //from route_select_list to route_select
+            transaction.replace(R.id.frame_layout,new Route_Select());
         }
 
         //Back 버튼 클릭 시 이전 프래그먼트로 이동시키도록 한다.

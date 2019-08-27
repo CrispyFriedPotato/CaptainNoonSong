@@ -1,28 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/route_select"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <android.support.design.widget.AppBarLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:orientation="horizontal" >
+    android:layout_height="70dp"
+    android:background="@color/actionbar_opacity"
+    android:paddingTop="13dp">
 
-    <Spinner
-        android:id="@+id/spinner_start"
+
+        <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="385dp"
+        android:layout_height="42dp"
+        android:layout_gravity="bottom|center"
+        android:background="@drawable/rounded">
+
+        <TextView
+        android:id="@+id/toolbar_title"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:drawable/btn_dropdown"
-        android:spinnerMode="dropdown" />
+        android:layout_height="match_parent"
+        android:layout_gravity="left"
+        android:fontFamily="casual"
+        android:text="건물 검색"
+        android:textAllCaps="false"
+        android:textColor="#D3D3D3"
+        android:textSize="20sp" />
 
-    <Spinner
-        android:id="@+id/spinner_destination"
+    </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <org.osmdroid.views.MapView
+        android:id="@+id/route_select_map"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/spinner_start"
-        android:layout_alignParentBottom="true"
-        android:layout_marginTop="350dp"
-        android:layout_marginBottom="281dp"
-        android:background="@android:drawable/btn_dropdown"
-        android:spinnerMode="dropdown" />
+        android:layout_height="match_parent"
+        tilesource="Mapnik"/>
 
-
-</RelativeLayout>
+</LinearLayout>

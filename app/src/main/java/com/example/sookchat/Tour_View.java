@@ -1,99 +1,137 @@
 package com.example.sookchat;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.annotation.NonNull;
+import android.location.LocationManager;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
-import com.naver.maps.map.LocationTrackingMode;
-import com.naver.maps.map.MapView;
-import com.naver.maps.map.NaverMap;
-import com.naver.maps.map.util.FusedLocationSource;
-import com.naver.maps.map.widget.LocationButtonView;
+import org.osmdroid.api.IMapController;
+import org.osmdroid.config.Configuration;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
 
 
-public class Tour_View extends Activity {
+public class Tour_View extends Activity  {
     // NaverMap API 3.0
-    private MapView mapView;
-    private LocationButtonView locationButtonView;
+    MapView mMapView=null;
+    //private MapView mapView;
+    //private LocationButtonView locationButtonView;
 
     //for transfering between fragment and activity
     private int tourId;
     private static final String LOG_TAG = "Tour_View";
-    private static final String TAG = "Tour_View";
+    private static final String TAG = "*********Tour_View";
+    private Button descButton;
 
     // FusedLocationSource (Google)
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1000;
-    private FusedLocationSource locationSource;
+    //private static final int LOCATION_PERMISSION_REQUEST_CODE = 1000;
+    //private FusedLocationSource locationSource;
+
+    public Tour_View() {
+    }
 
 
-    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Context ctx = getApplicationContext();
+        //important! set your user agent to prevent getting banned from the osm servers
+        Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
+        Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
         setContentView(R.layout.activity_tour_view);
+
+        mMapView = (MapView) findViewById(R.id.tour_view_map);
+        mMapView.setTileSource(TileSourceFactory.MAPNIK);
+
+        IMapController mapController = mMapView.getController();
+        mapController.setZoom(17.5);
+        GeoPoint startPoint = new GeoPoint(37.545128, 126.964523);
+        mapController.setCenter(startPoint);
 
         Intent intent = getIntent();
         tourId = intent.getIntExtra("tourId", 0);
         Log.e(TAG, "tourId = " + tourId);
+        LocationManager locationManager = (LocationManager)this.getSystemService(LOCATION_SERVICE);
+        if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            gpsCheck();
+        }
+        descButton = (Button)findViewById(R.id.desc_button);
 
+        descButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                Log.e(TAG,": called.");
+                Intent intent = new Intent(Tour_View.this, MapDescActivity.class);
+                intent.putExtra("tourid", tourId);
+                startActivity(intent);
 
-        mapView = findViewById(R.id.map_view);
-        mapView.onCreate(savedInstanceState);
-
+            }
+        });
+    }
+    private void gpsCheck() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("계속하려면 위치 기능 설정이 필요합니다.")
+                .setCancelable(false)
+                .setPositiveButton("확인",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                turnOnGps();
+                            }
+                        })
+                .setNegativeButton("아니요",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
-    public void onMapReady(@NonNull final NaverMap naverMap) {
-        //naverMap.getUiSettings().setLocationButtonEnabled(true);
-        locationButtonView.setMap(naverMap);
-
-        // Location Change Listener을 사용하기 위한 FusedLocationSource 설정
-        naverMap.setLocationSource(locationSource);
-        naverMap.setLocationTrackingMode(LocationTrackingMode.NoFollow);
+    // show GPS Options
+    private void turnOnGps() {
+        Intent gpsOptionsIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+        startActivity(gpsOptionsIntent);
     }
-
 
     @Override
     protected void onStart() {
         super.onStart();
-        mapView.onStart();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mapView.onResume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mapView.onPause();
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        mapView.onSaveInstanceState(outState);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        mapView.onStop();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mapView.onDestroy();
     }
 
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-        mapView.onLowMemory();
+
     }
 }
 

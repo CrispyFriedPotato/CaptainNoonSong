@@ -35,5 +35,7 @@ public interface RetroFitApiInterface {
     @POST("postcomment.php")
     Call<Comment> postComment(@Field("imageid") int imageid, @Field("comment") String comment);
 
+    @GET("get_map_desc.php")
+    Call<List<MapItem>> getMapDesc(@Query("tourid") int tourid);
 
 }

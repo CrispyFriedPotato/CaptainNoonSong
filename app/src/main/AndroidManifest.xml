@@ -12,7 +12,6 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_sookchat"
@@ -20,8 +19,8 @@
         android:roundIcon="@mipmap/ic_launcher_sookchat_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Tour_View">
-           </activity>
+        <activity android:name=".MapDescActivity"></activity>
+        <activity android:name=".Tour_View" />
         <activity android:name=".Main.WelcomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -42,7 +41,7 @@
             android:value="YOUR_KEY" />
         <meta-data
             android:name="com.naver.maps.map.CLIENT_ID"
-            android:value="YOUR_KEY" />
+            android:value="4td7xko9q6" />
 
         <activity
             android:name=".Watson.WatsonActivity"

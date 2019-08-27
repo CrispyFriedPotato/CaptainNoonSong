@@ -5,13 +5,7 @@ public class MapItem {
     String title;
     String description;
     String filename;
-
-    public MapItem(int id, String title, String description, String filename) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.filename = filename;
-    }
+    int tourid;
 
     public int getId() {
         return id;
@@ -45,6 +39,14 @@ public class MapItem {
         this.filename = filename;
     }
 
+    public int getTourid() {
+        return tourid;
+    }
+
+    public void setTourid(int tourid) {
+        this.tourid = tourid;
+    }
+
     @Override
     public String toString() {
         return "MapItem{" +
@@ -52,6 +54,7 @@ public class MapItem {
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", filename='" + filename + '\'' +
+                ", tourid=" + tourid +
                 '}';
     }
 }

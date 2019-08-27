@@ -24,8 +24,8 @@ import java.util.ArrayList;
 public class MapFragment extends Fragment implements OnMapReadyCallback,GoogleMap.OnMarkerClickListener{
     //Map Recycler View
     private RecyclerView recyclerView;
-    private ArrayList<MapCardFragment> imageModelArrayList;
-    private MapCardAdapter adapter;
+   private ArrayList<MapCardFragment> imageModelArrayList;
+   private MapCardAdapter adapter;
     private GoogleMap googleMap;
 
     private Marker mSook;
