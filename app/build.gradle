@@ -42,6 +42,6 @@ dependencies {
     implementation 'com.github.msayan:tutorial-view:v1.0.10'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
     implementation 'de.hdodenhof:circleimageview:3.0.0'
-    implementation 'com.naver.maps:map-sdk:3.4.0'
     implementation 'org.osmdroid:osmdroid-android:6.1.0'
+    implementation 'com.github.MKergall:osmbonuspack:6.6.0'
 }

@@ -1,9 +1,13 @@
 package com.example.sookchat;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
@@ -18,10 +22,19 @@ import android.view.ViewGroup;
 import com.example.sookchat.Main.MainActivity;
 
 import org.osmdroid.api.IMapController;
+import org.osmdroid.bonuspack.routing.MapQuestRoadManager;
+import org.osmdroid.bonuspack.routing.OSRMRoadManager;
+import org.osmdroid.bonuspack.routing.Road;
+import org.osmdroid.bonuspack.routing.RoadManager;
+import org.osmdroid.bonuspack.routing.RoadNode;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.CopyrightOverlay;
+import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.Polyline;
+
+import java.util.ArrayList;
 
 
 public class Route_Select extends Fragment {
@@ -44,11 +57,15 @@ public class Route_Select extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate");
+        //Disable StrictMode.ThreadPolicy to perform network calls in the UI thread.
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        final LocationManager lm = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
 
         View v = inflater.inflate(R.layout.fragment_route_select,container,false);
         mMapView = v.findViewById(R.id.route_select_map);
@@ -56,18 +73,30 @@ public class Route_Select extends Fragment {
         //important! set your user agent to prevent getting banned from the osm servers
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
         Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
+        mMapView.setMultiTouchControls(true);
 
 
         IMapController mapController = mMapView.getController();
         mapController.setZoom(17.5);
-        GeoPoint startPoint = new GeoPoint(37.545128, 126.964523);
+        GeoPoint startPoint = new GeoPoint(37.54593, 126.96373);
         mapController.setCenter(startPoint);
+
+
+        //마커 추가 코드
+        Marker startMarker = new Marker(mMapView);
+        startMarker.setPosition(startPoint);
+        startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+        mMapView.getOverlays().add(startMarker);
+        //map refresh
+        mMapView.invalidate();
+        //마커 클릭시 생기는 버블 안의 text
+        //startMarker.setIcon(ContextCompat.getDrawable(getActivity(),R.mipmap.ic_launcher));
+        //startMarker.setTitle("Start point");
 
         //toolbar
         Toolbar toolbar = (Toolbar)v.findViewById(R.id.toolbar);
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
-
         toolbar.findViewById(R.id.toolbar_title).setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -76,6 +105,40 @@ public class Route_Select extends Fragment {
                 ((MainActivity)getActivity()).replaceFragment(4);
             }
         });
+
+        //"Hello, Routing World!", polyline을 위에서 설정한 startpoint에서
+        //아래 코드에서 설정한 endpoint까지 그림
+        //RoadManager roadManager = new OSRMRoadManager(this.getActivity());
+        //"Playing with the Roadmanager"
+        RoadManager roadManager = new MapQuestRoadManager("6gMYR55drKQdJM49DByIETG2JCJk4kf1");
+        roadManager.addRequestOption("routeType ");
+
+        //Setting start and end points
+        ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>();
+        waypoints.add(startPoint);
+        GeoPoint endPoint = new GeoPoint(37.478659, 127.051250);
+        waypoints.add(endPoint);
+
+        Road road = roadManager.getRoad(waypoints);
+
+        //경로마다 점 찍어 주기
+        Drawable nodeIcon = getResources().getDrawable(R.drawable.marker_node);
+        for (int i=0; i<road.mNodes.size(); i++){
+            RoadNode node = road.mNodes.get(i);
+            Marker nodeMarker = new Marker(mMapView);
+            nodeMarker.setPosition(node.mLocation);
+            nodeMarker.setIcon(nodeIcon);
+            nodeMarker.setSubDescription(Road.getLengthDurationText(this.getActivity(), node.mLength, node.mDuration));
+            Drawable icon = getResources().getDrawable(R.drawable.ic_continue);
+            nodeMarker.setImage(icon);
+            //nodeMarker.setTitle("Step "+i);
+            mMapView.getOverlays().add(nodeMarker);
+        }
+
+        Polyline roadOverlay = RoadManager.buildRoadOverlay(road);
+        mMapView.getOverlays().add(roadOverlay);
+        mMapView.invalidate();
+
 
         return v;
     }
