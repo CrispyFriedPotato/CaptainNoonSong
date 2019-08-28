@@ -41,7 +41,7 @@
             android:value="YOUR_KEY" />
         <meta-data
             android:name="com.naver.maps.map.CLIENT_ID"
-            android:value="4td7xko9q6" />
+            android:value="YOUR_KEY" />
 
         <activity
             android:name=".Watson.WatsonActivity"
