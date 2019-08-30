@@ -19,7 +19,8 @@
         android:roundIcon="@mipmap/ic_launcher_sookchat_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MapDescActivity"></activity>
+        <activity android:name=".MyGPS"></activity>
+        <activity android:name=".MapDescActivity" />
         <activity android:name=".Tour_View" />
         <activity android:name=".Main.WelcomeActivity">
             <intent-filter>

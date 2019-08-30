@@ -111,7 +111,7 @@ public class Route_Select extends Fragment {
         //RoadManager roadManager = new OSRMRoadManager(this.getActivity());
         //"Playing with the Roadmanager"
         RoadManager roadManager = new MapQuestRoadManager("6gMYR55drKQdJM49DByIETG2JCJk4kf1");
-        roadManager.addRequestOption("routeType ");
+        roadManager.addRequestOption("routeType = ");
 
         //Setting start and end points
         ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>();

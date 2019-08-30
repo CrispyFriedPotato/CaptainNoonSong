@@ -70,7 +70,7 @@ public class Tour_View extends Activity  {
             @Override
             public void onClick(View v){
                 Log.e(TAG,": called.");
-                Intent intent = new Intent(Tour_View.this, MapDescActivity.class);
+                Intent intent = new Intent(Tour_View.this, MyGPS.class);
                 intent.putExtra("tourid", tourId);
                 startActivity(intent);
 
