@@ -1,11 +1,15 @@
 package com.example.sookchat;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +26,7 @@ import android.view.ViewGroup;
 import com.example.sookchat.Main.MainActivity;
 
 import org.osmdroid.api.IMapController;
+import org.osmdroid.bonuspack.routing.GraphHopperRoadManager;
 import org.osmdroid.bonuspack.routing.MapQuestRoadManager;
 import org.osmdroid.bonuspack.routing.OSRMRoadManager;
 import org.osmdroid.bonuspack.routing.Road;
@@ -60,11 +65,15 @@ public class Route_Select extends Fragment {
         //Disable StrictMode.ThreadPolicy to perform network calls in the UI thread.
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+        if ( Build.VERSION.SDK_INT >= 23 &&
+                ContextCompat.checkSelfPermission( this.getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
+            ActivityCompat.requestPermissions( this.getActivity(), new String[] {  android.Manifest.permission.ACCESS_FINE_LOCATION  },
+                    0 );
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         final LocationManager lm = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
 
         View v = inflater.inflate(R.layout.fragment_route_select,container,false);
@@ -75,70 +84,91 @@ public class Route_Select extends Fragment {
         Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
         mMapView.setMultiTouchControls(true);
 
+        double source_longi;
+        double source_lat;
 
-        IMapController mapController = mMapView.getController();
-        mapController.setZoom(17.5);
-        GeoPoint startPoint = new GeoPoint(37.54593, 126.96373);
-        mapController.setCenter(startPoint);
-
-
-        //마커 추가 코드
-        Marker startMarker = new Marker(mMapView);
-        startMarker.setPosition(startPoint);
-        startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-        mMapView.getOverlays().add(startMarker);
-        //map refresh
-        mMapView.invalidate();
-        //마커 클릭시 생기는 버블 안의 text
-        //startMarker.setIcon(ContextCompat.getDrawable(getActivity(),R.mipmap.ic_launcher));
-        //startMarker.setTitle("Start point");
-
-        //toolbar
-        Toolbar toolbar = (Toolbar)v.findViewById(R.id.toolbar);
-        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.findViewById(R.id.toolbar_title).setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                ((MainActivity)getActivity()).replaceFragment(4);
-            }
-        });
-
-        //"Hello, Routing World!", polyline을 위에서 설정한 startpoint에서
-        //아래 코드에서 설정한 endpoint까지 그림
-        //RoadManager roadManager = new OSRMRoadManager(this.getActivity());
-        //"Playing with the Roadmanager"
-        RoadManager roadManager = new MapQuestRoadManager("6gMYR55drKQdJM49DByIETG2JCJk4kf1");
-        roadManager.addRequestOption("routeType = ");
-
-        //Setting start and end points
-        ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>();
-        waypoints.add(startPoint);
-        GeoPoint endPoint = new GeoPoint(37.478659, 127.051250);
-        waypoints.add(endPoint);
-
-        Road road = roadManager.getRoad(waypoints);
-
-        //경로마다 점 찍어 주기
-        Drawable nodeIcon = getResources().getDrawable(R.drawable.marker_node);
-        for (int i=0; i<road.mNodes.size(); i++){
-            RoadNode node = road.mNodes.get(i);
-            Marker nodeMarker = new Marker(mMapView);
-            nodeMarker.setPosition(node.mLocation);
-            nodeMarker.setIcon(nodeIcon);
-            nodeMarker.setSubDescription(Road.getLengthDurationText(this.getActivity(), node.mLength, node.mDuration));
-            Drawable icon = getResources().getDrawable(R.drawable.ic_continue);
-            nodeMarker.setImage(icon);
-            //nodeMarker.setTitle("Step "+i);
-            mMapView.getOverlays().add(nodeMarker);
+        if ( Build.VERSION.SDK_INT >= 23 &&
+                ContextCompat.checkSelfPermission( this.getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
+            ActivityCompat.requestPermissions( this.getActivity(), new String[] {  android.Manifest.permission.ACCESS_FINE_LOCATION  },
+                    0 );
         }
 
-        Polyline roadOverlay = RoadManager.buildRoadOverlay(road);
-        mMapView.getOverlays().add(roadOverlay);
-        mMapView.invalidate();
+            IMapController mapController = mMapView.getController();
+            mapController.setZoom(17.5);
+            String provider = LocationManager.NETWORK_PROVIDER;
 
+
+            //Setting start and end points
+            ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>();
+            GeoPoint startPoint = new GeoPoint(37.545928, 126.963809);
+            mapController.setCenter(startPoint);
+            waypoints.add(startPoint);
+            GeoPoint endPoint = new GeoPoint(37.545724, 126.964219);
+            waypoints.add(endPoint);
+            //마커 추가 코드
+            Marker startMarker = new Marker(mMapView);
+            Marker endMarker = new Marker(mMapView);
+
+            startMarker.setPosition(startPoint);
+            startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+            mMapView.getOverlays().add(startMarker);
+
+            endMarker.setPosition(endPoint);
+            endMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+            mMapView.getOverlays().add(endMarker);
+            //map refresh
+            mMapView.invalidate();
+            //마커 클릭시 생기는 버블 안의 text
+            //startMarker.setIcon(ContextCompat.getDrawable(getActivity(),R.mipmap.ic_launcher));
+            //startMarker.setTitle("Start point");
+
+            //toolbar(from fragment to fragment)
+            Toolbar toolbar = (Toolbar)v.findViewById(R.id.toolbar);
+            ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+            ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
+            toolbar.findViewById(R.id.toolbar_title).setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    ((MainActivity)getActivity()).replaceFragment(4);
+                }
+            });
+
+
+            //"Hello, Routing World!", polyline을 위에서 설정한 startpoint에서
+            //아래 코드에서 설정한 endpoint까지 그림
+            //RoadManager roadManager = new OSRMRoadManager(this.getActivity());
+            //"Playing with the Roadmanager"
+            //RoadManager roadManager = new MapQuestRoadManager("6gMYR55drKQdJM49DByIETG2JCJk4kf1");
+            GraphHopperRoadManager roadManager = new GraphHopperRoadManager("6gMYR55drKQdJM49DByIETG2JCJk4kf1",true);
+            //RoadManager roadManager = new OSRMRoadManager(this.getActivity());
+            roadManager.addRequestOption("vehicle=foot");
+            Road road = roadManager.getRoad(waypoints);
+
+
+
+            //경로마다 점 찍어 주기
+            Drawable nodeIcon = getResources().getDrawable(R.drawable.marker_node);
+            for (int i=0; i<road.mNodes.size(); i++){
+                RoadNode node = road.mNodes.get(i);
+                Marker nodeMarker = new Marker(mMapView);
+                nodeMarker.setPosition(node.mLocation);
+                nodeMarker.setIcon(nodeIcon);
+                nodeMarker.setSubDescription(Road.getLengthDurationText(this.getActivity(), node.mLength, node.mDuration));
+                Drawable icon = getResources().getDrawable(R.drawable.ic_continue);
+                nodeMarker.setImage(icon);
+                //nodeMarker.setTitle("Step "+i);
+                mMapView.getOverlays().add(nodeMarker);
+            }
+
+            Polyline roadOverlay = GraphHopperRoadManager.buildRoadOverlay(road);
+            mMapView.getOverlays().add(roadOverlay);
+            mMapView.invalidate();
+
+            if (road.mStatus != Road.STATUS_OK){
+                //handle error... warn the user, etc.
+            }
 
         return v;
     }
