@@ -267,11 +267,7 @@ public class MyGPS extends AppCompatActivity {
                             campus = 6;
                         }
                     }
-
-
-
                     //건물추천코드 2캠퍼스
-
                     if(longitude>126.963576 &&longitude<126.964279){
                         if(latitude>37.544500 &&latitude<37.545076){
                             building = "르네상스플라자";
