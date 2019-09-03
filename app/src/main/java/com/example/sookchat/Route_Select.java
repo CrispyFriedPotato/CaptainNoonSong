@@ -204,6 +204,9 @@ public class Route_Select extends Fragment {
                     1,
                     gpsLocationListener);
         }
+        if (road.mStatus != Road.STATUS_OK){
+            //handle error... warn the user, etc.
+        }
         return v;
     }
 
