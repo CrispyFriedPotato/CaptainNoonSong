@@ -105,119 +105,124 @@ public class Route_Select extends Fragment {
         final LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
         View v = inflater.inflate(R.layout.fragment_route_select, container, false);
-//        mMapView = v.findViewById(R.id.webview_login);
-//        Context ctx = getActivity().getApplicationContext();
-//        //important! set your user agent to prevent getting banned from the osm servers
-//        Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
-//        Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
-//        mMapView.setMultiTouchControls(true);
+        mMapView = v.findViewById(R.id.route_select_map);
+        Context ctx = getActivity().getApplicationContext();
+        //important! set your user agent to prevent getting banned from the osm servers
+        Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
+        Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
+        mMapView.setMultiTouchControls(true);
+//         Web으로 구현하는 경우
+//        mWebView = (WebView)v.findViewById(R.id.webview_login);
+//        mWebView.setWebViewClient(new WebViewClient());
+//        mWebSettings = mWebView.getSettings();
+//        mWebSettings.setJavaScriptEnabled(true);
+//
+//        mWebView.loadUrl("http://"+"192.168.43.113"+":8080/index.html");
 
-        mWebView = (WebView)v.findViewById(R.id.webview_login);
-        mWebView.setWebViewClient(new WebViewClient());
-        mWebSettings = mWebView.getSettings();
-        mWebSettings.setJavaScriptEnabled(true);
+        IMapController mapController = mMapView.getController();
+        mapController.setZoom(17.5);
+        String provider = LocationManager.NETWORK_PROVIDER;
 
-        mWebView.loadUrl("http://"+"192.168.43.113"+":8080/index.html");
-//
-//        IMapController mapController = mMapView.getController();
-//        mapController.setZoom(17.5);
-//        String provider = LocationManager.NETWORK_PROVIDER;
-//
-//
-//        //Setting start and end points
-//        ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>();
-//        GeoPoint endPoint = new GeoPoint(37.545724, 126.964219);
-//        waypoints.add(endPoint);
-//        //마커 추가 코드
-////        Marker startMarker = new Marker(mMapView);
-//        Marker endMarker = new Marker(mMapView);
-////
-////        startMarker.setPosition(startPoint);
-////        startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-////        mMapView.getOverlays().add(startMarker);
-//
-//        endMarker.setPosition(endPoint);
-//        endMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-//        mMapView.getOverlays().add(endMarker);
-//        //map refresh
-//        mMapView.invalidate();
-//        //마커 클릭시 생기는 버블 안의 text
-//        //startMarker.setIcon(ContextCompat.getDrawable(getActivity(),R.mipmap.ic_launcher));
-//        //startMarker.setTitle("Start point");
-//
-//        //toolbar(from fragment to fragment)
-//        Toolbar toolbar = (Toolbar) v.findViewById(R.id.toolbar);
-//        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-//        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
-//        toolbar.findViewById(R.id.toolbar_title).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                ((MainActivity) getActivity()).replaceFragment(4);
-//            }
-//        });
-//
-//
-//        //"Hello, Routing World!", polyline을 위에서 설정한 startpoint에서
-//        //아래 코드에서 설정한 endpoint까지 그림
-//        //RoadManager roadManager = new OSRMRoadManager(this.getActivity());
-//        //"Playing with the Roadmanager"
-//        //RoadManager roadManager = new MapQuestRoadManager("6gMYR55drKQdJM49DByIETG2JCJk4kf1");
-//        GraphHopperRoadManager roadManager = new GraphHopperRoadManager("6gMYR55drKQdJM49DByIETG2JCJk4kf1", true);
-//        //RoadManager roadManager = new OSRMRoadManager(this.getActivity());
-//        roadManager.addRequestOption("vehicle=foot");
-//        Road road = roadManager.getRoad(waypoints);
-//
-//
-//        //경로마다 점 찍어 주기
-//        Drawable nodeIcon = getResources().getDrawable(R.drawable.marker_node);
-//        for (int i = 0; i < road.mNodes.size(); i++) {
-//            RoadNode node = road.mNodes.get(i);
-//            Marker nodeMarker = new Marker(mMapView);
-//            nodeMarker.setPosition(node.mLocation);
-//            nodeMarker.setIcon(nodeIcon);
-//            nodeMarker.setSubDescription(Road.getLengthDurationText(this.getActivity(), node.mLength, node.mDuration));
-//            Drawable icon = getResources().getDrawable(R.drawable.ic_continue);
-//            nodeMarker.setImage(icon);
-//            //nodeMarker.setTitle("Step "+i);
-//            mMapView.getOverlays().add(nodeMarker);
-//        }
-//
-//        Polyline roadOverlay = GraphHopperRoadManager.buildRoadOverlay(road);
-//        mMapView.getOverlays().add(roadOverlay);
-//        mMapView.invalidate();
-//
-//        if (Build.VERSION.SDK_INT >= 23 &&
-//                ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(this.getActivity(), new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-//                    0);
-//        } else {
-//            Location location = lm.getLastKnownLocation(provider);
-//
-//            double longitude = location.getLongitude();
-//            double latitude = location.getLatitude();
-//
-//            //Departure setting
-//            GeoPoint startPoint = new GeoPoint(latitude,longitude);
-//            mapController.setCenter(startPoint);
-//            waypoints.add(startPoint);
-//
-//            Marker startMarker = new Marker(mMapView);
-//            startMarker.setPosition(startPoint);
-//            startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-//            mMapView.getOverlays().add(startMarker);
-//
-//            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-//                    1000,
-//                    1,
-//                    gpsLocationListener);
-//            lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-//                    1000,
-//                    1,
-//                    gpsLocationListener);
-//        }
-//        if (road.mStatus != Road.STATUS_OK){
-//            //handle error... warn the user, etc.
-//        }
+        ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>();
+        if (Build.VERSION.SDK_INT >= 23 &&
+                ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this.getActivity(), new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    0);
+        } else {
+            Location location = lm.getLastKnownLocation(provider);
+
+            double longitude = location.getLongitude();
+            double latitude = location.getLatitude();
+
+            //Departure setting
+            GeoPoint startPoint = new GeoPoint(latitude,longitude);
+            mapController.setCenter(startPoint);
+            waypoints.add(startPoint);
+
+            Marker startMarker = new Marker(mMapView);
+            startMarker.setPosition(startPoint);
+            startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+            mMapView.getOverlays().add(startMarker);
+
+            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                    1000,
+                    1,
+                    gpsLocationListener);
+            lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                    1000,
+                    1,
+                    gpsLocationListener);
+        }
+
+
+        //Setting start and end points
+
+//        GeoPoint startPoint = new GeoPoint(37.545434, 126.963985);
+//        mapController.setCenter(startPoint);//37.546304, 126.96474937.545682, 126.963380
+//        waypoints.add(startPoint);
+        GeoPoint endPoint = new GeoPoint(37.545349, 126.965021);
+        waypoints.add(endPoint);
+        //마커 추가 코드
+//        Marker startMarker = new Marker(mMapView);
+        Marker endMarker = new Marker(mMapView);
+
+//        startMarker.setPosition(startPoint);
+//        startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+//        mMapView.getOverlays().add(startMarker);
+
+        endMarker.setPosition(endPoint);
+        endMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+        mMapView.getOverlays().add(endMarker);
+        //map refresh
+        mMapView.invalidate();
+        //마커 클릭시 생기는 버블 안의 text
+        //startMarker.setIcon(ContextCompat.getDrawable(getActivity(),R.mipmap.ic_launcher));
+        //startMarker.setTitle("Start point");
+
+        //toolbar(from fragment to fragment)
+        Toolbar toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbar.findViewById(R.id.toolbar_title).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity) getActivity()).replaceFragment(4);
+            }
+        });
+
+
+        //"Hello, Routing World!", polyline을 위에서 설정한 startpoint에서
+        //아래 코드에서 설정한 endpoint까지 그림
+        //RoadManager roadManager = new OSRMRoadManager(this.getActivity());
+        //"Playing with the Roadmanager"
+        //RoadManager roadManager = new MapQuestRoadManager("6gMYR55drKQdJM49DByIETG2JCJk4kf1");
+        GraphHopperRoadManager roadManager = new GraphHopperRoadManager("200cd758-1b1a-4cf4-8e27-1c235e9f3017", true);
+        //RoadManager roadManager = new OSRMRoadManager(this.getActivity());
+        roadManager.addRequestOption("vehicle=foot");
+        Road road = roadManager.getRoad(waypoints);
+
+
+        //경로마다 점 찍어 주기
+        Drawable nodeIcon = getResources().getDrawable(R.drawable.marker_node);
+        for (int i = 0; i < road.mNodes.size(); i++) {
+            RoadNode node = road.mNodes.get(i);
+            Marker nodeMarker = new Marker(mMapView);
+            nodeMarker.setPosition(node.mLocation);
+            nodeMarker.setIcon(nodeIcon);
+            nodeMarker.setSubDescription(Road.getLengthDurationText(this.getActivity(), node.mLength, node.mDuration));
+            Drawable icon = getResources().getDrawable(R.drawable.ic_continue);
+            nodeMarker.setImage(icon);
+            nodeMarker.setTitle("Step "+i);
+            mMapView.getOverlays().add(nodeMarker);
+        }
+
+        Polyline roadOverlay = GraphHopperRoadManager.buildRoadOverlay(road);
+        mMapView.getOverlays().add(roadOverlay);
+        mMapView.invalidate();
+
+        if (road.mStatus != Road.STATUS_OK){
+            //handle error... warn the user, etc.
+        }
         return v;
     }
 

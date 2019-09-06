@@ -114,16 +114,23 @@ public class Tour_View extends Activity {
         GeoPoint gPt3= new GeoPoint(37.546373, 126.963866); //진리
         GeoPoint gPt4= new GeoPoint(37.546426, 126.964711); //순헌
         GeoPoint gPt5= new GeoPoint(37.545394, 126.965015); //학생회관
-        GeoPoint gPt6= new GeoPoint(37.546651, 126.964323); //수련
-        GeoPoint gPt7= new GeoPoint(37.546636, 126.965055); //행파
+        GeoPoint gPt6= new GeoPoint(37.545384, 126.964527); //행정관
+        GeoPoint gPt7= new GeoPoint(37.546651, 126.964323); //수련
+        GeoPoint gPt8= new GeoPoint(37.546636, 126.965055); //행파
 
 
-        GeoPoint gPt8= new GeoPoint(37.544834, 126.964923); //프라임
-        GeoPoint gPt9 = new GeoPoint(37.544737, 126.964084); //박물관
-        GeoPoint gPt10= new GeoPoint(37.544256, 126.964064); //음대
-        GeoPoint gPt11 = new GeoPoint(37.543823, 126.963949); //사회
-        GeoPoint gPt12 = new GeoPoint(37.543861, 126.964459); //약대
-        GeoPoint gPt13 = new GeoPoint(37.544329, 126.964905); //미대
+        GeoPoint gPt9= new GeoPoint(37.544834, 126.964923); //프라임
+        GeoPoint gPt10 = new GeoPoint(37.544737, 126.964084); //박물관
+        GeoPoint gPt11= new GeoPoint(37.544256, 126.964064); //음대
+        GeoPoint gPt12 = new GeoPoint(37.543823, 126.963949); //사회
+        GeoPoint gPt13 = new GeoPoint(37.543861, 126.964459); //약대
+        GeoPoint gPt14 = new GeoPoint(37.544329, 126.964905); //미대
+        GeoPoint gPt15= new GeoPoint(37.544769, 126.964096); //르네상스
+        GeoPoint gPt16= new GeoPoint(37.543800, 126.965422); //백주년
+        GeoPoint gPt17= new GeoPoint(37.544114, 126.965980); //중앙도서관
+        GeoPoint gPt18= new GeoPoint(37.544591, 126.966441); //과학
+
+        //르네상스 백주년 중도 과학관
 
         geoList.add(gPt1);
         geoList.add(gPt2);
@@ -138,9 +145,16 @@ public class Tour_View extends Activity {
         geoList.add(gPt11);
         geoList.add(gPt12);
         geoList.add(gPt13);
+        geoList.add(gPt14);
+        geoList.add(gPt15);
+        geoList.add(gPt16);
+        geoList.add(gPt17);
+        geoList.add(gPt18);
 
 
-        sp  = getStartPoint(0);
+
+
+        //sp  = buildingnum;
         ArrayList<Integer> route = getRoute(sp);
         getLine(tourId, route, geoList);
 
@@ -161,7 +175,7 @@ public class Tour_View extends Activity {
     private ArrayList<Integer> getRoute(int sp){
         Log.e(TAG, "getRoute: called.");
         routeList = new ArrayList<Integer>();
-        if (tourId ==2) {
+        if (tourId == 2) {
             sp = 9;
             routeList.add(sp);
             routeList.add(10);
@@ -169,14 +183,30 @@ public class Tour_View extends Activity {
             routeList.add(12);
             routeList.add(13);
             routeList.add(8);
+
+
         }
+
+
         else if(tourId == 1){
+
             sp = 5;
-            routeList.add(sp);
-            routeList.add(1);
-            routeList.add(2);
-            routeList.add(3);
-            routeList.add(4);
+
+
+            for(int i=0 ; i < 6; i++){
+
+                if(sp <= 6) {
+                    routeList.add(sp);
+                    sp++;
+                }
+
+                else{
+                    routeList.add(sp-6);
+                    sp++;
+                }
+
+            }
+
 
         }
 
