@@ -79,6 +79,9 @@ public class MyGPS extends AppCompatActivity {
                     campus = 5;
                 }
             }
+
+
+
             //건물추천코드 2캠퍼스
 
             if(longitude>126.963576 &&longitude<126.964279){
@@ -186,15 +189,6 @@ public class MyGPS extends AppCompatActivity {
 
 
     protected  MyGPS(){} //Exsists only to defeat instatiation.
-
-    private static MyGPS getInstance(){
-        if(instance == null){
-            instance = new MyGPS();
-
-        }
-
-        return instance;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -369,6 +363,15 @@ public class MyGPS extends AppCompatActivity {
             }
         });
 
+    }
+
+    private static MyGPS getInstance(){
+        if(instance == null){
+            instance = new MyGPS();
+
+        }
+
+        return instance;
     }
 
     public int getValue(){

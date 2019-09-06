@@ -1,8 +1,10 @@
 package com.example.sookchat;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -23,18 +25,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.example.sookchat.Main.MainActivity;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.bonuspack.routing.GraphHopperRoadManager;
-import org.osmdroid.bonuspack.routing.MapQuestRoadManager;
-import org.osmdroid.bonuspack.routing.OSRMRoadManager;
 import org.osmdroid.bonuspack.routing.Road;
-import org.osmdroid.bonuspack.routing.RoadManager;
 import org.osmdroid.bonuspack.routing.RoadNode;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.util.GeoPoint;
@@ -45,47 +43,31 @@ import org.osmdroid.views.overlay.Polyline;
 
 import java.util.ArrayList;
 
+import static android.support.v4.content.PermissionChecker.checkSelfPermission;
 
-public class Route_Select extends Fragment {
 
+public class Route_Select extends Fragment implements View.OnClickListener {
 
-    private WebView mWebView;
-    private WebSettings mWebSettings;
     private static int MENU_LAST_ID = Menu.FIRST; // Always set to last unused id
     public static final String TAG = "osmBaseFrag";
 
-    //public abstract String getSampleTitle();
+    private final int PERMISSIONS_ACCESS_FINE_LOCATION = 1000;
+    private final int PERMISSIONS_ACCESS_COARSE_LOCATION = 1001;
+    public LocationManager lm;
+    IMapController mapController;
+    ArrayList<GeoPoint> waypoints;
+    int MENU_VERTICAL_REPLICATION = 0;
+    int MENU_HORIZTONAL_REPLICATION = 0;
+    int MENU_ROTATE_CLOCKWISE = 0;
+    int MENU_ROTATE_COUNTER_CLOCKWISE = 0;
+    int MENU_SCALE_TILES = 0;
+
 
     public Route_Select() {
         // Required empty public constructor
     }
 
-    final LocationListener gpsLocationListener = new LocationListener() {
-        public void onLocationChanged(Location location) {
-            String provider = location.getProvider();
-            double latitude = location.getLatitude();
-            double longitude = location.getLongitude();
-
-
-        }
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-
-        }
-        @Override
-        public void onProviderEnabled(String provider) {
-
-        }
-        @Override
-        public void onProviderDisabled(String provider) {
-
-        }
-    };
     protected MapView mMapView;
-
-    public MapView getmMapView() {
-        return mMapView;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -94,16 +76,16 @@ public class Route_Select extends Fragment {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
     }
-        int MENU_VERTICAL_REPLICATION = 0;
-        int MENU_HORIZTONAL_REPLICATION = 0;
-        int MENU_ROTATE_CLOCKWISE = 0;
-        int MENU_ROTATE_COUNTER_CLOCKWISE = 0;
-        int MENU_SCALE_TILES = 0;
+    private GpsInfo newGps;
+    private ImageButton btnNewLocation;
+    private boolean isAccessFineLocation = false;
+    private boolean isAccessCoarseLocation = false;
+    private boolean isPermission = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
+        lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         View v = inflater.inflate(R.layout.fragment_route_select, container, false);
         mMapView = v.findViewById(R.id.route_select_map);
         Context ctx = getActivity().getApplicationContext();
@@ -111,64 +93,26 @@ public class Route_Select extends Fragment {
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
         Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
         mMapView.setMultiTouchControls(true);
-//         Web으로 구현하는 경우
-//        mWebView = (WebView)v.findViewById(R.id.webview_login);
-//        mWebView.setWebViewClient(new WebViewClient());
-//        mWebSettings = mWebView.getSettings();
-//        mWebSettings.setJavaScriptEnabled(true);
-//
-//        mWebView.loadUrl("http://"+"192.168.43.113"+":8080/index.html");
 
-        IMapController mapController = mMapView.getController();
+        //지도 focus 부분
+        mapController = mMapView.getController();
         mapController.setZoom(17.5);
-        String provider = LocationManager.NETWORK_PROVIDER;
 
-        ArrayList<GeoPoint> waypoints = new ArrayList<GeoPoint>();
-        if (Build.VERSION.SDK_INT >= 23 &&
-                ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this.getActivity(), new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    0);
-        } else {
-            Location location = lm.getLastKnownLocation(provider);
-
-            double longitude = location.getLongitude();
-            double latitude = location.getLatitude();
-
-            //Departure setting
-            GeoPoint startPoint = new GeoPoint(latitude,longitude);
-            mapController.setCenter(startPoint);
-            waypoints.add(startPoint);
-
-            Marker startMarker = new Marker(mMapView);
-            startMarker.setPosition(startPoint);
-            startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-            mMapView.getOverlays().add(startMarker);
-
-            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                    1000,
-                    1,
-                    gpsLocationListener);
-            lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-                    1000,
-                    1,
-                    gpsLocationListener);
-        }
-
+        //사용자 위치 받아오는 버튼
+        btnNewLocation = v.findViewById(R.id.locationReset);
 
         //Setting start and end points
-
-//        GeoPoint startPoint = new GeoPoint(37.545434, 126.963985);
-//        mapController.setCenter(startPoint);//37.546304, 126.96474937.545682, 126.963380
-//        waypoints.add(startPoint);
+        waypoints = new ArrayList<GeoPoint>();
+        newGps = new GpsInfo(getActivity());
+        GeoPoint startPoint = new GeoPoint(7.546304, 126.964749);
+        mapController.setCenter(startPoint);//37.546304, 126.96474937.545682, 126.963380
+        waypoints.add(startPoint);
         GeoPoint endPoint = new GeoPoint(37.545349, 126.965021);
         waypoints.add(endPoint);
         //마커 추가 코드
 //        Marker startMarker = new Marker(mMapView);
         Marker endMarker = new Marker(mMapView);
 
-//        startMarker.setPosition(startPoint);
-//        startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-//        mMapView.getOverlays().add(startMarker);
 
         endMarker.setPosition(endPoint);
         endMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
@@ -180,24 +124,36 @@ public class Route_Select extends Fragment {
         //startMarker.setTitle("Start point");
 
         //toolbar(from fragment to fragment)
-        Toolbar toolbar = (Toolbar) v.findViewById(R.id.toolbar);
-        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+        Toolbar toolbar1 = (Toolbar) v.findViewById(R.id.toolbar1);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar1);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.findViewById(R.id.toolbar_title).setOnClickListener(new View.OnClickListener() {
+        toolbar1.findViewById(R.id.toolbar_title1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ((MainActivity) getActivity()).replaceFragment(4);
+                Toast.makeText(
+                        getActivity(),
+                         "출발점",
+                        Toast.LENGTH_LONG).show();
+
+            }
+        });
+        Toolbar toolbar2 = (Toolbar) v.findViewById(R.id.toolbar2);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar2);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbar2.findViewById(R.id.toolbar_title2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity) getActivity()).replaceFragment(4);
+                Toast.makeText(
+                        getActivity(),
+                        "도착점",
+                        Toast.LENGTH_LONG).show();
             }
         });
 
 
-        //"Hello, Routing World!", polyline을 위에서 설정한 startpoint에서
-        //아래 코드에서 설정한 endpoint까지 그림
-        //RoadManager roadManager = new OSRMRoadManager(this.getActivity());
-        //"Playing with the Roadmanager"
-        //RoadManager roadManager = new MapQuestRoadManager("6gMYR55drKQdJM49DByIETG2JCJk4kf1");
         GraphHopperRoadManager roadManager = new GraphHopperRoadManager("200cd758-1b1a-4cf4-8e27-1c235e9f3017", true);
-        //RoadManager roadManager = new OSRMRoadManager(this.getActivity());
         roadManager.addRequestOption("vehicle=foot");
         Road road = roadManager.getRoad(waypoints);
 
@@ -210,9 +166,7 @@ public class Route_Select extends Fragment {
             nodeMarker.setPosition(node.mLocation);
             nodeMarker.setIcon(nodeIcon);
             nodeMarker.setSubDescription(Road.getLengthDurationText(this.getActivity(), node.mLength, node.mDuration));
-            Drawable icon = getResources().getDrawable(R.drawable.ic_continue);
-            nodeMarker.setImage(icon);
-            nodeMarker.setTitle("Step "+i);
+            nodeMarker.setTitle("Step " + i);
             mMapView.getOverlays().add(nodeMarker);
         }
 
@@ -220,173 +174,248 @@ public class Route_Select extends Fragment {
         mMapView.getOverlays().add(roadOverlay);
         mMapView.invalidate();
 
-        if (road.mStatus != Road.STATUS_OK){
+        if (road.mStatus != Road.STATUS_OK) {
             //handle error... warn the user, etc.
         }
+
+        // GPS 정보를 보여주기 위한 이벤트 클래스 등록
+        btnNewLocation.setOnClickListener(this);
+
+        callPermission();
         return v;
     }
 
-        @Override
-        public void onPause() {
-            if (mMapView != null) {
-                mMapView.onPause();
-            }
-            super.onPause();
+    @Override
+    public void onPause() {
+        if (mMapView != null) {
+            mMapView.onPause();
         }
+        super.onPause();
+    }
 
-        @Override
-        public void onResume() {
-            super.onResume();
-            if (mMapView != null) {
-                mMapView.onResume();
-            }
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mMapView != null) {
+            mMapView.onResume();
         }
+    }
 
-        @Override
-        public void onActivityCreated(Bundle savedInstanceState) {
-            super.onActivityCreated(savedInstanceState);
-            Log.d(TAG, "onActivityCreated");
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Log.d(TAG, "onActivityCreated");
 
-            if (mMapView != null) {
-                addOverlays();
+        if (mMapView != null) {
+            addOverlays();
 
-                final Context context = this.getActivity();
-                final DisplayMetrics dm = context.getResources().getDisplayMetrics();
+            final Context context = this.getActivity();
+            final DisplayMetrics dm = context.getResources().getDisplayMetrics();
 
-                CopyrightOverlay copyrightOverlay = new CopyrightOverlay(getActivity());
-                copyrightOverlay.setTextSize(10);
+            CopyrightOverlay copyrightOverlay = new CopyrightOverlay(getActivity());
+            copyrightOverlay.setTextSize(10);
 
-                mMapView.getOverlays().add(copyrightOverlay);
-                mMapView.setMultiTouchControls(true);
-                mMapView.setTilesScaledToDpi(true);
-            }
+            mMapView.getOverlays().add(copyrightOverlay);
+            mMapView.setMultiTouchControls(true);
+            mMapView.setTilesScaledToDpi(true);
         }
+    }
 
-        @Override
-        public void onDestroyView() {
-            super.onDestroyView();
-            Log.d(TAG, "onDetach");
-            if (mMapView != null)
-                mMapView.onDetach();
-            mMapView = null;
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.d(TAG, "onDetach");
+        if (mMapView != null)
+            mMapView.onDetach();
+        mMapView = null;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy");
+
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        MenuItem add = menu.add("Run Tests");
+        MENU_LAST_ID++;
+        MENU_VERTICAL_REPLICATION = MENU_LAST_ID;
+        menu.add(0, MENU_VERTICAL_REPLICATION, Menu.NONE, "Vertical Replication").setCheckable(true);
+        MENU_LAST_ID++;
+        MENU_HORIZTONAL_REPLICATION = MENU_LAST_ID;
+        menu.add(0, MENU_HORIZTONAL_REPLICATION, Menu.NONE, "Horizontal Replication").setCheckable(true);
+
+        MENU_LAST_ID++;
+        MENU_SCALE_TILES = MENU_LAST_ID;
+        menu.add(0, MENU_SCALE_TILES, Menu.NONE, "Scale Tiles").setCheckable(true);
+
+        MENU_LAST_ID++;
+        MENU_ROTATE_CLOCKWISE = MENU_LAST_ID;
+        menu.add(0, MENU_ROTATE_CLOCKWISE, Menu.NONE, "Rotate Clockwise");
+
+        MENU_LAST_ID++;
+        MENU_ROTATE_COUNTER_CLOCKWISE = MENU_LAST_ID;
+        menu.add(0, MENU_ROTATE_COUNTER_CLOCKWISE, Menu.NONE, "Rotate Counter Clockwise");
+        // Put overlay items first
+        try {
+            mMapView.getOverlayManager().onCreateOptionsMenu(menu, MENU_LAST_ID, mMapView);
+        } catch (NullPointerException npe) {
+            //can happen during CI tests and very rapid fragment switching
         }
+        super.onCreateOptionsMenu(menu, inflater);
+    }
 
-        @Override
-        public void onDestroy() {
-            super.onDestroy();
-            Log.d(TAG, "onDestroy");
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        try {
+            MenuItem item = menu.findItem(MENU_VERTICAL_REPLICATION);
+            item.setChecked(mMapView.isVerticalMapRepetitionEnabled());
+            item = menu.findItem(MENU_HORIZTONAL_REPLICATION);
+            item.setChecked(mMapView.isHorizontalMapRepetitionEnabled());
 
+            item = menu.findItem(MENU_SCALE_TILES);
+            item.setChecked(mMapView.isTilesScaledToDpi());
+            mMapView.getOverlayManager().onPrepareOptionsMenu(menu, MENU_LAST_ID, mMapView);
+        } catch (NullPointerException npe) {
+            //can happen during CI tests and very rapid fragment switching
         }
+        super.onPrepareOptionsMenu(menu);
+    }
 
-        @Override
-        public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-            MenuItem add = menu.add("Run Tests");
-            MENU_LAST_ID++;
-            MENU_VERTICAL_REPLICATION = MENU_LAST_ID;
-            menu.add(0, MENU_VERTICAL_REPLICATION, Menu.NONE, "Vertical Replication").setCheckable(true);
-            MENU_LAST_ID++;
-            MENU_HORIZTONAL_REPLICATION = MENU_LAST_ID;
-            menu.add(0, MENU_HORIZTONAL_REPLICATION, Menu.NONE, "Horizontal Replication").setCheckable(true);
-
-            MENU_LAST_ID++;
-            MENU_SCALE_TILES = MENU_LAST_ID;
-            menu.add(0, MENU_SCALE_TILES, Menu.NONE, "Scale Tiles").setCheckable(true);
-
-            MENU_LAST_ID++;
-            MENU_ROTATE_CLOCKWISE = MENU_LAST_ID;
-            menu.add(0, MENU_ROTATE_CLOCKWISE, Menu.NONE, "Rotate Clockwise");
-
-            MENU_LAST_ID++;
-            MENU_ROTATE_COUNTER_CLOCKWISE = MENU_LAST_ID;
-            menu.add(0, MENU_ROTATE_COUNTER_CLOCKWISE, Menu.NONE, "Rotate Counter Clockwise");
-            // Put overlay items first
-            try {
-                mMapView.getOverlayManager().onCreateOptionsMenu(menu, MENU_LAST_ID, mMapView);
-            } catch (NullPointerException npe) {
-                //can happen during CI tests and very rapid fragment switching
-            }
-            super.onCreateOptionsMenu(menu, inflater);
-        }
-
-        @Override
-        public void onPrepareOptionsMenu(Menu menu) {
-            try {
-                MenuItem item = menu.findItem(MENU_VERTICAL_REPLICATION);
-                item.setChecked(mMapView.isVerticalMapRepetitionEnabled());
-                item = menu.findItem(MENU_HORIZTONAL_REPLICATION);
-                item.setChecked(mMapView.isHorizontalMapRepetitionEnabled());
-
-                item = menu.findItem(MENU_SCALE_TILES);
-                item.setChecked(mMapView.isTilesScaledToDpi());
-                mMapView.getOverlayManager().onPrepareOptionsMenu(menu, MENU_LAST_ID, mMapView);
-            } catch (NullPointerException npe) {
-                //can happen during CI tests and very rapid fragment switching
-            }
-            super.onPrepareOptionsMenu(menu);
-        }
-
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            if (item.getTitle().toString().equals("Run Tests")) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            runTestProcedures();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getTitle().toString().equals("Run Tests")) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        runTestProcedures();
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                }).start();
-                return true;
-            } else if (item.getItemId() == MENU_HORIZTONAL_REPLICATION) {
-                mMapView.setHorizontalMapRepetitionEnabled(!mMapView.isHorizontalMapRepetitionEnabled());
-                mMapView.invalidate();
-                return true;
-            } else if (item.getItemId() == MENU_VERTICAL_REPLICATION) {
-                mMapView.setVerticalMapRepetitionEnabled(!mMapView.isVerticalMapRepetitionEnabled());
-                mMapView.invalidate();
-                return true;
-            } else if (item.getItemId() == MENU_SCALE_TILES) {
-                mMapView.setTilesScaledToDpi(!mMapView.isTilesScaledToDpi());
-                mMapView.invalidate();
-                return true;
-            } else if (item.getItemId() == MENU_ROTATE_CLOCKWISE) {
-                float currentRotation = mMapView.getMapOrientation() + 10;
-                if (currentRotation > 360)
-                    currentRotation = currentRotation - 360;
-                mMapView.setMapOrientation(currentRotation, true);
+                }
+            }).start();
+            return true;
+        } else if (item.getItemId() == MENU_HORIZTONAL_REPLICATION) {
+            mMapView.setHorizontalMapRepetitionEnabled(!mMapView.isHorizontalMapRepetitionEnabled());
+            mMapView.invalidate();
+            return true;
+        } else if (item.getItemId() == MENU_VERTICAL_REPLICATION) {
+            mMapView.setVerticalMapRepetitionEnabled(!mMapView.isVerticalMapRepetitionEnabled());
+            mMapView.invalidate();
+            return true;
+        } else if (item.getItemId() == MENU_SCALE_TILES) {
+            mMapView.setTilesScaledToDpi(!mMapView.isTilesScaledToDpi());
+            mMapView.invalidate();
+            return true;
+        } else if (item.getItemId() == MENU_ROTATE_CLOCKWISE) {
+            float currentRotation = mMapView.getMapOrientation() + 10;
+            if (currentRotation > 360)
+                currentRotation = currentRotation - 360;
+            mMapView.setMapOrientation(currentRotation, true);
 
-                return true;
-            } else if (item.getItemId() == MENU_ROTATE_COUNTER_CLOCKWISE) {
-                float currentRotation = mMapView.getMapOrientation() - 10;
-                if (currentRotation < 0)
-                    currentRotation = currentRotation + 360;
-                mMapView.setMapOrientation(currentRotation, true);
-                return true;
-            } else if (mMapView.getOverlayManager().onOptionsItemSelected(item, MENU_LAST_ID, mMapView)) {
-                return true;
-            }
-            return false;
-        }
-
-        /**
-         * An appropriate place to override and add overlays.
-         */
-        protected void addOverlays() {
-            //
-        }
-
-        public boolean skipOnCiTests() {
+            return true;
+        } else if (item.getItemId() == MENU_ROTATE_COUNTER_CLOCKWISE) {
+            float currentRotation = mMapView.getMapOrientation() - 10;
+            if (currentRotation < 0)
+                currentRotation = currentRotation + 360;
+            mMapView.setMapOrientation(currentRotation, true);
+            return true;
+        } else if (mMapView.getOverlayManager().onOptionsItemSelected(item, MENU_LAST_ID, mMapView)) {
             return true;
         }
+        return false;
+    }
 
-        /**
-         * optional place to put automated test procedures, used during the connectCheck tests
-         * this is called OFF of the UI thread. block this method call util the test is done
-         */
-        public void runTestProcedures() throws Exception {
+    /**
+     * An appropriate place to override and add overlays.
+     */
+    protected void addOverlays() {
+        //
+    }
 
+    public boolean skipOnCiTests() {
+        return true;
+    }
+
+    /**
+     * optional place to put automated test procedures, used during the connectCheck tests
+     * this is called OFF of the UI thread. block this method call util the test is done
+     */
+    public void runTestProcedures() throws Exception {
+
+    }
+
+    //LOCATION PERMISSION위해 CALLPERMISSION도 필요하다.
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        if (requestCode == PERMISSIONS_ACCESS_FINE_LOCATION
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+            isAccessFineLocation = true;
+
+        } else if (requestCode == PERMISSIONS_ACCESS_COARSE_LOCATION
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+            isAccessCoarseLocation = true;
         }
+
+        if (isAccessFineLocation && isAccessCoarseLocation) {
+            isPermission = true;
+        }
+    }
+
+    // 전화번호 권한 요청
+    private void callPermission() {
+        // Check the SDK version and whether the permission is already granted or not.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                && checkSelfPermission(getActivity(),Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            requestPermissions(
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSIONS_ACCESS_FINE_LOCATION);
+
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                && checkSelfPermission(getActivity(),Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            requestPermissions(
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                    PERMISSIONS_ACCESS_COARSE_LOCATION);
+        } else {
+            isPermission = true;
+        }
+    }
+
+
+    @Override
+    public void onClick(View v) {
+                // 권한 요청을 해야 함
+                if (!isPermission) {
+                    callPermission();
+                    return;
+                }
+
+                newGps = new GpsInfo(getActivity());
+                // GPS 사용유무 가져오기
+                if (newGps.isGetLocation()) {
+
+                    double latitude = newGps.getLatitude();
+                    double longitude = newGps.getLongitude();
+
+                    Toast.makeText(
+                            getActivity(),
+                            "당신의 위치 - \n위도: " + latitude + "\n경도: " + longitude,
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    // GPS 를 사용할수 없으므로
+                    newGps.showSettingsAlert();
+                }
+            }
+
 }
 

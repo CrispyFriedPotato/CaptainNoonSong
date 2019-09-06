@@ -16,11 +16,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.MapsInitializer;
+
 import org.osmdroid.api.IMapController;
+import org.osmdroid.bonuspack.routing.Road;
+import org.osmdroid.bonuspack.routing.RoadNode;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polyline;
 
 import java.util.ArrayList;
@@ -54,7 +59,7 @@ public class Tour_View extends Activity {
 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        MapsInitializer.initialize(getApplicationContext());
         Context ctx = getApplicationContext();
         //important! set your user agent to prevent getting banned from the osm servers
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
@@ -125,10 +130,10 @@ public class Tour_View extends Activity {
         GeoPoint gPt12 = new GeoPoint(37.543823, 126.963949); //사회
         GeoPoint gPt13 = new GeoPoint(37.543861, 126.964459); //약대
         GeoPoint gPt14 = new GeoPoint(37.544329, 126.964905); //미대
-        GeoPoint gPt15= new GeoPoint(37.544769, 126.964096); //르네상스
-        GeoPoint gPt16= new GeoPoint(37.543800, 126.965422); //백주년
-        GeoPoint gPt17= new GeoPoint(37.544114, 126.965980); //중앙도서관
-        GeoPoint gPt18= new GeoPoint(37.544591, 126.966441); //과학
+
+        GeoPoint gPt15= new GeoPoint(37.543800, 126.965422); //백주년
+        GeoPoint gPt16= new GeoPoint(37.544114, 126.965980); //중앙도서관
+        GeoPoint gPt17= new GeoPoint(37.544591, 126.966441); //과학
 
         //르네상스 백주년 중도 과학관
 
@@ -149,21 +154,36 @@ public class Tour_View extends Activity {
         geoList.add(gPt15);
         geoList.add(gPt16);
         geoList.add(gPt17);
-        geoList.add(gPt18);
 
 
 
 
         //sp  = buildingnum;
-        ArrayList<Integer> route = getRoute(sp);
+        ArrayList<Integer> route = getRoute(1);
+
+//        Marker startMarker = new Marker(mMapView);
+//        startMarker.setPosition(gPt1);
+//        startMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+//        mMapView.getOverlays().add(startMarker);
+
+
+
+        //enables this opt in feature
+        //Marker.ENABLE_TEXT_LABELS_WHEN_NO_IMAGE = true;
+
+//build the marker
+        Marker m = new Marker(mMapView);
+        m.setTextLabelBackgroundColor(R.color.colorAccent);
+        m.setTextLabelFontSize(12);
+        m.setTextLabelForegroundColor(R.color.colorPrimaryDark);
+        m.setTitle("hello world");
+//must set the icon to null last
+        m.setIcon(null);
+        m.setPosition(geoList.get(2));
+        mMapView.getOverlays().add(m);
+
+
         getLine(tourId, route, geoList);
-
-
-
-
-//        startActivity(new Intent(Tour_View.this, LocationFinder.class));
-
-
     }
 
 
@@ -176,6 +196,12 @@ public class Tour_View extends Activity {
         Log.e(TAG, "getRoute: called.");
         routeList = new ArrayList<Integer>();
         if (tourId == 2) {
+
+//            for(int i = 0; i<7; i++ ){
+//                if(sp>=9 & sp<=14){
+//
+//                }
+//            }
             sp = 9;
             routeList.add(sp);
             routeList.add(10);
@@ -190,18 +216,17 @@ public class Tour_View extends Activity {
 
         else if(tourId == 1){
 
-            sp = 5;
-
-
             for(int i=0 ; i < 6; i++){
 
                 if(sp <= 6) {
+                    Log.e(TAG, "sp = "+sp);
                     routeList.add(sp);
                     sp++;
                 }
 
                 else{
                     routeList.add(sp-6);
+                    Log.e(TAG, "sp = "+sp);
                     sp++;
                 }
 

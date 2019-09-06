@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-android:orientation="vertical"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
     android:id="@+id/route_select_list">
 
 
@@ -14,39 +15,38 @@ android:layout_height="match_parent"
     android:layout_height="70dp"
     android:background="@color/actionbar_opacity"
     android:paddingTop="13dp">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="385dp"
-            android:layout_height="42dp"
-            android:layout_gravity="bottom|center"
-            android:background="@drawable/rounded"
-            app:theme="@style/TransparentToolbar">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
             <ImageView
                 android:id="@+id/backarrow"
-                android:layout_width="25dp"
-                android:layout_height="39dp"
+                android:layout_width="23dp"
+                android:layout_height="match_parent"
                 app:srcCompat="@drawable/back" />
 
-            <TextView
-                android:id="@+id/toolbar_title"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="left"
-                android:fontFamily="casual"
-                android:text="건물 검색"
-                android:textAllCaps="false"
-                android:textColor="#D3D3D3"
-                android:textSize="20sp" />
+                <SearchView
+                    android:id="@+id/list_search_view"
+                    android:layout_width="370dp"
+                    android:layout_height="match_parent"/>
+        </LinearLayout>
+    </android.support.design.widget.AppBarLayout>
 
-        </android.support.v7.widget.Toolbar>
-
-</android.support.design.widget.AppBarLayout>
-
-    <android.support.v7.widget.RecyclerView
+    <fragment
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:id="@+id/routelistfragment"
+        android:layout_height="wrap_content"
+        tools:layout="@layout/fragment_route_select_list">
+
+        <ListView
+            android:id="@+id/listView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="#999999"
+            android:dividerHeight="1dp">
+        </ListView>
+
+    </fragment>
 
 
 </LinearLayout>

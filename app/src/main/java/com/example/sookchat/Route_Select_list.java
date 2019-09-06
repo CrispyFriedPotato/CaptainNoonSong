@@ -7,8 +7,11 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.ListFragment;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,12 +19,18 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 
+import com.example.sookchat.Agora.AgoraAdapter;
 import com.example.sookchat.Main.MainActivity;
 
+import java.util.ArrayList;
+import java.util.List;
 
-public class Route_Select_list extends Fragment  {
+
+public class Route_Select_list extends ListFragment {
     private SearchView searchView = null;
     private SearchView.OnQueryTextListener queryTextListener;
     private RecyclerView recycler_view;
@@ -38,6 +47,7 @@ public class Route_Select_list extends Fragment  {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
     }
 
     @Override
@@ -51,6 +61,9 @@ public class Route_Select_list extends Fragment  {
                 ((MainActivity)getActivity()).replaceFragment(5);
             }
         });
+
+
+
         // Inflate the layout for this fragment
         return v;
     }

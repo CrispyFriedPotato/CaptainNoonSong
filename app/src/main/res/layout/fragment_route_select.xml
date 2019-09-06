@@ -6,49 +6,77 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <org.osmdroid.views.MapView
+            android:id="@+id/route_select_map"
+            tilesource="Mapnik"
+            android:layout_width="match_parent"
+            android:layout_height="637dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="-17dp">
+
+            <ImageButton
+                android:id="@+id/locationReset"
+                android:layout_width="50dp"
+                android:layout_height="45dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/ic_menu_mylocation" />
+        </org.osmdroid.views.MapView>
+    </RelativeLayout>
+
     <android.support.design.widget.AppBarLayout
-    android:layout_width="match_parent"
-    android:layout_height="70dp"
-    android:background="@color/actionbar_opacity"
-    android:paddingTop="13dp">
+        android:layout_width="match_parent"
+        android:layout_height="111dp"
+        android:background="@color/actionbar_opacity"
+        android:paddingTop="13dp">
 
 
         <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="385dp"
-        android:layout_height="42dp"
-        android:layout_gravity="bottom|center"
-        android:background="@drawable/rounded">
+            android:id="@+id/toolbar1"
+            android:layout_width="398dp"
+            android:layout_height="42dp"
+            android:layout_gravity="bottom|center"
+            android:background="@drawable/rounded">
 
-        <TextView
-        android:id="@+id/toolbar_title"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="left"
-        android:fontFamily="casual"
-        android:text="건물 검색"
-        android:textAllCaps="false"
-        android:textColor="#D3D3D3"
-        android:textSize="20sp" />
+            <TextView
+                android:id="@+id/toolbar_title1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="left"
+                android:fontFamily="casual"
+                android:text="출발지 검색"
+                android:textAllCaps="false"
+                android:textColor="#D3D3D3"
+                android:textSize="20sp" />
 
-    </android.support.v7.widget.Toolbar>
+        </android.support.v7.widget.Toolbar>
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar2"
+            android:layout_width="398dp"
+            android:layout_height="42dp"
+            android:layout_gravity="bottom|center"
+            android:background="@drawable/rounded">
+
+            <TextView
+                android:id="@+id/toolbar_title2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="left"
+                android:fontFamily="casual"
+                android:text="도착지 검색"
+                android:textAllCaps="false"
+                android:textColor="#D3D3D3"
+                android:textSize="20sp" />
+
+        </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
-
-    <!--<WebView-->
-        <!--android:id="@+id/webview_login"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"/>-->
-    <org.osmdroid.views.MapView
-        android:id="@+id/route_select_map"
-        tilesource="Mapnik"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    <!--<ImageButton-->
-        <!--android:layout_width="50dp"-->
-        <!--android:layout_height="50dp"-->
-        <!--android:layout_gravity="top"-->
-        <!--app:srcCompat="@drawable/target"/>-->
-    </org.osmdroid.views.MapView>
 
 </LinearLayout>
