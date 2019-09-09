@@ -77,7 +77,7 @@ public class Route_Select extends Fragment implements View.OnClickListener {
         StrictMode.setThreadPolicy(policy);
     }
     private GpsInfo newGps;
-    private ImageButton btnNewLocation;
+
     private boolean isAccessFineLocation = false;
     private boolean isAccessCoarseLocation = false;
     private boolean isPermission = false;
@@ -98,8 +98,6 @@ public class Route_Select extends Fragment implements View.OnClickListener {
         mapController = mMapView.getController();
         mapController.setZoom(17.5);
 
-        //사용자 위치 받아오는 버튼
-        btnNewLocation = v.findViewById(R.id.locationReset);
 
         //Setting start and end points
         waypoints = new ArrayList<GeoPoint>();
@@ -177,9 +175,6 @@ public class Route_Select extends Fragment implements View.OnClickListener {
         if (road.mStatus != Road.STATUS_OK) {
             //handle error... warn the user, etc.
         }
-
-        // GPS 정보를 보여주기 위한 이벤트 클래스 등록
-        btnNewLocation.setOnClickListener(this);
 
         callPermission();
         return v;

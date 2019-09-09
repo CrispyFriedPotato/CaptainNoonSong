@@ -19,16 +19,8 @@
             android:layout_alignParentBottom="true"
             android:layout_marginTop="0dp"
             android:layout_marginBottom="-17dp">
-
-            <ImageButton
-                android:id="@+id/locationReset"
-                android:layout_width="50dp"
-                android:layout_height="45dp"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
-                android:src="@drawable/ic_menu_mylocation" />
         </org.osmdroid.views.MapView>
-    </RelativeLayout>
+
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -78,5 +70,5 @@
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
-
+    </RelativeLayout>
 </LinearLayout>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,46 +7,30 @@
     android:orientation="vertical"
     android:id="@+id/route_select_list">
 
+            <EditText
+                android:id="@+id/editTextFilter"
+                android:layout_width="338dp"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/backarrow"/>
 
-
-    <android.support.design.widget.AppBarLayout
-    android:id="@+id/route_list"
-    android:layout_width="match_parent"
-    android:layout_height="70dp"
-    android:background="@color/actionbar_opacity"
-    android:paddingTop="13dp">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <ImageView
+            <ImageButton
+               android:id="@+id/locationReset"
+               android:layout_width="45dp"
+               android:layout_height="45dp"
+               android:layout_alignParentTop="true"
+               android:layout_alignParentRight="true"
+               android:layout_toRightOf="@id/editTextFilter"
+               android:src="@drawable/ic_menu_mylocation" />
+           <ImageView
                 android:id="@+id/backarrow"
-                android:layout_width="23dp"
-                android:layout_height="match_parent"
+                android:layout_width="25dp"
+                android:layout_height="37dp"
                 app:srcCompat="@drawable/back" />
 
-                <SearchView
-                    android:id="@+id/list_search_view"
-                    android:layout_width="370dp"
-                    android:layout_height="match_parent"/>
-        </LinearLayout>
-    </android.support.design.widget.AppBarLayout>
-
-    <fragment
-        android:layout_width="match_parent"
-        android:id="@+id/routelistfragment"
-        android:layout_height="wrap_content"
-        tools:layout="@layout/fragment_route_select_list">
-
-        <ListView
-            android:id="@+id/listView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:divider="#999999"
-            android:dividerHeight="1dp">
-        </ListView>
-
-    </fragment>
-
-
-</LinearLayout>
+            <ListView
+                android:id="@+id/listview1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/editTextFilter"
+                android:textFilterEnabled="true" />
+</RelativeLayout>
