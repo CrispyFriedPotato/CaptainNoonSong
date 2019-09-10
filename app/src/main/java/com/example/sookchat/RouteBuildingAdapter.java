@@ -18,14 +18,14 @@ public class RouteBuildingAdapter extends BaseAdapter{
     private Context context;
     private List<String> list;
     private LayoutInflater inflate;
-    private ViewHolder viewHolder;
+//    private ViewHolder viewHolder;
 
     private ArrayList<Building_list> nameAndcampus = new ArrayList<Building_list>() ;
-    public RouteBuildingAdapter() {
-            this.list = list;
-            this.context = context;
-            this.inflate = LayoutInflater.from(context);
-        }
+//    public RouteBuildingAdapter() {
+//            this.list = list;
+//            this.context = context;
+//            this.inflate = LayoutInflater.from(context);
+//        }
 
     @Override
     public int getCount() {
@@ -35,7 +35,7 @@ public class RouteBuildingAdapter extends BaseAdapter{
     // position에 위치한 데이터를 화면에 출력하는데 사용될 View를 리턴. : 필수 구현
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        final int pos = position;
+
         final Context context = parent.getContext();
 
         // "listview_item" Layout을 inflate하여 convertView 참조 획득.
@@ -56,8 +56,8 @@ public class RouteBuildingAdapter extends BaseAdapter{
 //        viewHolder.campus.setText(list.get(position));
 
             // 화면에 표시될 View(Layout이 inflate된)으로부터 위젯에 대한 참조 획득
-            TextView titleTextView = (TextView) convertView.findViewById(R.id.name);
-            TextView descTextView = (TextView) convertView.findViewById(R.id.campus);
+            TextView titleTextView = convertView.findViewById(R.id.name);
+            TextView descTextView = convertView.findViewById(R.id.campus);
 
             // Data Set(listViewItemList)에서 position에 위치한 데이터 참조 획득
             Building_list listViewItem = nameAndcampus.get(position);
@@ -91,12 +91,12 @@ public class RouteBuildingAdapter extends BaseAdapter{
 
             nameAndcampus.add(item);
         }
+//
+//        class ViewHolder {
+//            public TextView name;
+//            public TextView campus;
+//        }
 
-        class ViewHolder {
-            public TextView name;
-            public TextView campus;
-        }
-    }
 
 //    @Override
 //    public int getCount() {
@@ -135,6 +135,6 @@ public class RouteBuildingAdapter extends BaseAdapter{
 //    }
 //
 //
-
+}
 
 //source : https://sharp57dev.tistory.com/11
