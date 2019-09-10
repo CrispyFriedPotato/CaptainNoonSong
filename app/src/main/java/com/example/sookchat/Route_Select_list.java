@@ -1,29 +1,19 @@
 package com.example.sookchat;
 
-import android.app.SearchManager;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
-
-import com.example.sookchat.Agora.AgoraAdapter;
 import com.example.sookchat.Main.MainActivity;
 
 import java.util.ArrayList;
@@ -31,11 +21,15 @@ import java.util.List;
 
 
 public class Route_Select_list extends ListFragment {
-    private SearchView searchView = null;
-    private SearchView.OnQueryTextListener queryTextListener;
-    private RecyclerView recycler_view;
+
+    private List<String> list;
+    private ListView listview = null;
+    private EditText search;
+    private RouteBuildingAdapter adapter;
+    private ArrayList<String> _buildings=null;
 
     private OnFragmentInteractionListener mListener;
+    private ImageButton btnNewLocation;
 
     public Route_Select_list() {
         // Required empty public constructor
@@ -46,14 +40,14 @@ public class Route_Select_list extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View v = inflater.inflate(R.layout.fragment_route_select_list,container,false);
+
         ImageView iv = v.findViewById(R.id.backarrow);
         iv.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -62,10 +56,122 @@ public class Route_Select_list extends ListFragment {
             }
         });
 
+        //사용자 위치 받아오는 버튼
+        btnNewLocation = v.findViewById(R.id.locationReset);
 
+
+        search=v.findViewById(R.id.editTextFilter);
+        listview = v.findViewById(android.R.id.list) ;
+
+        list = new ArrayList<>();
+
+        adapter = new RouteBuildingAdapter() ;
+
+//        list.add("명신관");
+//        list.add("새힘관");
+//        list.add("진리관");
+//        list.add("순헌관");
+//        list.add("학생회관");
+//        list.add("행정관");
+//        list.add("프라임관");
+//        list.add("음악대학");
+//        list.add("미술대학");
+//        list.add("사회대학");
+//        list.add("백주년 기념관");
+//        list.add("중앙 도서관");
+//        list.add("과학관");
+//        adapter = new RouteBuildingAdapter(list,this.getActivity());
+//        listview.setAdapter(adapter);
+
+        adapter.addItem("명신관","1캠퍼스");
+        adapter.addItem("새힘관","1캠퍼스");
+        adapter.addItem("진리관","1캠퍼스");
+        adapter.addItem("순헌관","1캠퍼스");
+        adapter.addItem("학생회관","1캠퍼스");
+        adapter.addItem("행정관","1캠퍼스");
+        adapter.addItem("프라임관","2캠퍼스");
+        adapter.addItem("약학대학","2캠퍼스");
+        adapter.addItem("음악대학","2캠퍼스");
+        adapter.addItem("미술대학","2캠퍼스");
+        adapter.addItem("사회대학","2캠퍼스");
+        adapter.addItem("백주년 기념관","2캠퍼스");
+        adapter.addItem("중앙도서관","2캠퍼스");
+        adapter.addItem("과학관","2캠퍼스");
+        listview.setAdapter(adapter) ;
+
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView parent, View v, int position, long id) {
+                // get item
+                Building_list item = (Building_list) parent.getItemAtPosition(position) ;
+
+                String titleStr = item.getName() ;
+                String descStr = item.getCampus() ;
+
+
+                // TODO : use item data.
+            }
+        }) ;
+
+
+
+
+        _buildings = new ArrayList<String>();
+        _buildings.addAll(list);
+
+
+        search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable edit) {
+                String text = search.getText().toString();
+                search(text);
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+        }) ;
+
+
+
+
+        // GPS 정보를 보여주기 위한 이벤트 클래스 등록
+        //btnNewLocation.setOnClickListener();
 
         // Inflate the layout for this fragment
         return v;
+    }
+
+    // 검색을 수행하는 메소드
+    public void search(String charText) {
+
+        // 문자 입력시마다 리스트를 지우고 새로 뿌려준다.
+        list.clear();
+
+        // 문자 입력이 없을때는 모든 데이터를 보여준다.
+        if (charText.length() == 0) {
+            list.addAll(_buildings);
+        }
+        // 문자 입력을 할때..
+        else
+        {
+            // 리스트의 모든 데이터를 검색한다.
+            for(int i = 0;i < _buildings.size(); i++)
+            {
+                // arraylist의 모든 데이터에 입력받은 단어(charText)가 포함되어 있으면 true를 반환한다.
+                if (_buildings.get(i).toLowerCase().contains(charText))
+                {
+                    // 검색된 데이터를 리스트에 추가한다.
+                    list.add(_buildings.get(i));
+                }
+            }
+        }
+        // 리스트 데이터가 변경되었으므로 아답터를 갱신하여 검색된 데이터를 화면에 보여준다.
+        adapter.notifyDataSetChanged();
     }
 
 
@@ -92,3 +198,5 @@ public class Route_Select_list extends ListFragment {
 
 
 }
+
+//"listview search" source: https://sharp57dev.tistory.com/11

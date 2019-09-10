@@ -11,6 +11,8 @@
                 android:id="@+id/editTextFilter"
                 android:layout_width="338dp"
                 android:layout_height="wrap_content"
+                android:divider="#999999"
+                android:dividerHeight="1dp"
                 android:layout_toRightOf="@id/backarrow"/>
 
             <ImageButton
@@ -28,7 +30,7 @@
                 app:srcCompat="@drawable/back" />
 
             <ListView
-                android:id="@+id/listview1"
+                android:id="@android:id/list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@id/editTextFilter"
