@@ -65,60 +65,34 @@ public class Route_Select_list extends ListFragment {
 
         list = new ArrayList<>();
 
-        adapter = new RouteBuildingAdapter() ;
+        adapter = new RouteBuildingAdapter(list,getActivity()) ;
 
-//        list.add("명신관");
-//        list.add("새힘관");
-//        list.add("진리관");
-//        list.add("순헌관");
-//        list.add("학생회관");
-//        list.add("행정관");
-//        list.add("프라임관");
-//        list.add("음악대학");
-//        list.add("미술대학");
-//        list.add("사회대학");
-//        list.add("백주년 기념관");
-//        list.add("중앙 도서관");
-//        list.add("과학관");
-//        adapter = new RouteBuildingAdapter(list,this.getActivity());
-//        listview.setAdapter(adapter);
-
-        adapter.addItem("명신관","1캠퍼스");
-        adapter.addItem("새힘관","1캠퍼스");
-        adapter.addItem("진리관","1캠퍼스");
-        adapter.addItem("순헌관","1캠퍼스");
-        adapter.addItem("학생회관","1캠퍼스");
-        adapter.addItem("행정관","1캠퍼스");
-        adapter.addItem("프라임관","2캠퍼스");
-        adapter.addItem("약학대학","2캠퍼스");
-        adapter.addItem("음악대학","2캠퍼스");
-        adapter.addItem("미술대학","2캠퍼스");
-        adapter.addItem("사회대학","2캠퍼스");
-        adapter.addItem("백주년 기념관","2캠퍼스");
-        adapter.addItem("중앙도서관","2캠퍼스");
-        adapter.addItem("과학관","2캠퍼스");
-        listview.setAdapter(adapter) ;
+        list.add("명신관");
+        list.add("새힘관");
+        list.add("진리관");
+        list.add("순헌관");
+        list.add("행파관");
+        list.add("교수 수련회관");
+        list.add("학생회관");
+        list.add("행정관");
+        list.add("프라임관");
+        list.add("음악대학");
+        list.add("미술대학");
+        list.add("사회대학");
+        list.add("백주년 기념관");
+        list.add("중앙 도서관");
+        list.add("과학관");
+        adapter = new RouteBuildingAdapter(list,this.getActivity());
+        listview.setAdapter(adapter);
 
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView parent, View v, int position, long id) {
-                // get item
-                Building_list item = (Building_list) parent.getItemAtPosition(position) ;
-
-                String titleStr = item.getName() ;
-                String descStr = item.getCampus() ;
 
 
                 // TODO : use item data.
             }
         }) ;
-
-
-
-
-        _buildings = new ArrayList<String>();
-        _buildings.addAll(list);
-
 
         search.addTextChangedListener(new TextWatcher() {
             @Override
@@ -142,7 +116,6 @@ public class Route_Select_list extends ListFragment {
         // GPS 정보를 보여주기 위한 이벤트 클래스 등록
         //btnNewLocation.setOnClickListener();
 
-        // Inflate the layout for this fragment
         return v;
     }
 
@@ -198,5 +171,3 @@ public class Route_Select_list extends ListFragment {
 
 
 }
-
-//"listview search" source: https://sharp57dev.tistory.com/11
