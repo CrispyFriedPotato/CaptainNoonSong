@@ -102,10 +102,10 @@ public class Route_Select extends Fragment implements View.OnClickListener {
         //Setting start and end points
         waypoints = new ArrayList<GeoPoint>();
         newGps = new GpsInfo(getActivity());
-        GeoPoint startPoint = new GeoPoint(7.546304, 126.964749);
+        GeoPoint startPoint = new GeoPoint(37.545933, 126.963772);
         mapController.setCenter(startPoint);//37.546304, 126.96474937.545682, 126.963380
         waypoints.add(startPoint);
-        GeoPoint endPoint = new GeoPoint(37.545349, 126.965021);
+        GeoPoint endPoint = new GeoPoint(37.546630, 126.964372);
         waypoints.add(endPoint);
         //마커 추가 코드
 //        Marker startMarker = new Marker(mMapView);
@@ -129,10 +129,12 @@ public class Route_Select extends Fragment implements View.OnClickListener {
             @Override
             public void onClick(View v) {
                 ((MainActivity) getActivity()).replaceFragment(4);
-                Toast.makeText(
-                        getActivity(),
-                         "출발점",
-                        Toast.LENGTH_LONG).show();
+
+
+//                Toast.makeText(
+//                        getActivity(),
+//                         "출발점",
+//                        Toast.LENGTH_LONG).show();
 
             }
         });
@@ -143,15 +145,16 @@ public class Route_Select extends Fragment implements View.OnClickListener {
             @Override
             public void onClick(View v) {
                 ((MainActivity) getActivity()).replaceFragment(4);
-                Toast.makeText(
-                        getActivity(),
-                        "도착점",
-                        Toast.LENGTH_LONG).show();
+
+//                Toast.makeText(
+//                        getActivity(),
+//                        "도착점",
+//                        Toast.LENGTH_LONG).show();
             }
         });
 
 
-        GraphHopperRoadManager roadManager = new GraphHopperRoadManager("200cd758-1b1a-4cf4-8e27-1c235e9f3017", true);
+        GraphHopperRoadManager roadManager = new GraphHopperRoadManager("7d7c5e0b-8521-4a3c-8eec-9ede1047d099", true);
         roadManager.addRequestOption("vehicle=foot");
         Road road = roadManager.getRoad(waypoints);
 

@@ -57,15 +57,6 @@ public class CardClickActivity extends AppCompatActivity implements ViewAdapter.
         snapHelper.attachToRecyclerView(recyclerView);
         getDataList(catid);
 
-
-
-
-
-
-
-
-
-
     }
 
 

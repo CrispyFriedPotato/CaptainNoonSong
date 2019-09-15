@@ -5,17 +5,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:id="@+id/route_select_list">
+    android:id="@+id/route_select_list"
+    >
 
             <EditText
                 android:id="@+id/editTextFilter"
-                android:layout_width="338dp"
+                android:layout_width="316dp"
+                android:layout_toRightOf="@id/backarrow"
                 android:layout_height="wrap_content"
+                android:hint="건물을 검색하세요"
                 android:divider="#999999"
                 android:dividerHeight="1dp"
-                android:layout_toRightOf="@id/backarrow"/>
+               />
 
-            <ImageButton
+            <ImageView
                android:id="@+id/locationReset"
                android:layout_width="45dp"
                android:layout_height="45dp"
@@ -23,16 +26,17 @@
                android:layout_alignParentRight="true"
                android:layout_toRightOf="@id/editTextFilter"
                android:src="@drawable/ic_menu_mylocation" />
-           <ImageView
+
+            <ImageView
                 android:id="@+id/backarrow"
-                android:layout_width="25dp"
-                android:layout_height="37dp"
+                android:layout_width="49dp"
+                android:layout_height="40dp"
                 app:srcCompat="@drawable/back" />
 
             <ListView
                 android:id="@android:id/list"
+                android:layout_below="@id/editTextFilter"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@id/editTextFilter"
                 android:textFilterEnabled="true" />
 </RelativeLayout>
