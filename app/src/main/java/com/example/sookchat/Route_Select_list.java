@@ -1,9 +1,11 @@
 package com.example.sookchat;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -12,9 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -24,26 +24,21 @@ import com.example.sookchat.Main.MainActivity;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.support.constraint.Constraints.TAG;
-
-
-public class Route_Select_list extends ListFragment {
+public class Route_Select_list extends Fragment {
 
     private List<String> list;
     private ListView listview = null;
     private EditText search;
     private RouteBuildingAdapter adapter;
     private ArrayList<String> _buildings=null;
-    Intent mResult;
+
 
     private OnFragmentInteractionListener mListener;
 
     public Route_Select_list() {
         // Required empty public constructor
     }
-    public static Route_Select_list newInstance(){
-        return new Route_Select_list();
-    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +50,7 @@ public class Route_Select_list extends ListFragment {
 
         View v = inflater.inflate(R.layout.fragment_route_select_list,container,false);
 
+        //뒤로가기 버튼
         ImageView iv = v.findViewById(R.id.backarrow);
         iv.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -62,6 +58,7 @@ public class Route_Select_list extends ListFragment {
                 ((MainActivity)getActivity()).replaceFragment(5);
             }
         });
+
 
 //        사용자 위치 받아오는 버튼, ImageButton이었으나 ImageView로 바
         ImageView btnNewLocation;
@@ -96,8 +93,6 @@ public class Route_Select_list extends ListFragment {
         list.add("중앙 도서관");
         list.add("과학관");
 
-
-//        adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1,list);
         adapter = new RouteBuildingAdapter(list,getActivity()) ;
         listview.setAdapter(adapter);
 
@@ -105,27 +100,21 @@ public class Route_Select_list extends ListFragment {
         _buildings.addAll(list);
 
 
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(mListener != null){
+                    String input = list.get(position);
+                    mListener.onFragmentInteraction(input);
+                    Log.i("위치값 받았나?","아마도");
+                }
+//                Toast.makeText(getActivity(),list.get(position),Toast.LENGTH_LONG).show();
+                ((MainActivity)getActivity()).replaceFragment(5);
+            }
 
-//        final EditText location = v.findViewById(R.id.editTextFilter);
-//        listview.setOnItemClickListener(new AdapterView.OnItemClickListener()
-//        {
-//            @Override public void onItemClick(AdapterView<?> parent, View view,int position, long id)
-//            {
-////                location.setText("명신관");
-//                Log.i("ONCLICK","YOU clicked");
-//                Toast.makeText(getActivity(), "Stop Clicking me", Toast.LENGTH_SHORT).show();
-//            }
-//        });
+        });
 
-//        listview.setFocusable(false);
-//        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView parent, View v, int position, long id) {
-//                Log.v(TAG,"리스너 안에는 들어오긴 하네 ");
-//                Toast.makeText(getActivity(), "Stop Clicking me", Toast.LENGTH_SHORT).show();
-////
-//            }
-//        }) ;
 
         search.addTextChangedListener(new TextWatcher() {
             @Override
@@ -143,17 +132,11 @@ public class Route_Select_list extends ListFragment {
             }
         }) ;
 
-
-
-
-
         // GPS 정보를 보여주기 위한 이벤트 클래스 등록
         //btnNewLocation.setOnClickListener();
 
         return v;
     }
-
-
 
     // 검색을 수행하는 메소드
     public void search(String charText) {
@@ -188,7 +171,12 @@ public class Route_Select_list extends ListFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
     }
 
     @Override
@@ -201,7 +189,7 @@ public class Route_Select_list extends ListFragment {
 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onFragmentInteraction(String text);
     }
 
 

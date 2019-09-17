@@ -2,6 +2,7 @@ package com.example.sookchat;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.location.Criteria;
@@ -10,6 +11,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
@@ -26,6 +28,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.sookchat.Main.MainActivity;
@@ -48,6 +51,7 @@ import static android.support.v4.content.PermissionChecker.checkSelfPermission;
 
 public class Route_Select extends Fragment implements View.OnClickListener {
 
+
     private static int MENU_LAST_ID = Menu.FIRST; // Always set to last unused id
     public static final String TAG = "osmBaseFrag";
 
@@ -62,6 +66,10 @@ public class Route_Select extends Fragment implements View.OnClickListener {
     int MENU_ROTATE_COUNTER_CLOCKWISE = 0;
     int MENU_SCALE_TILES = 0;
 
+    private static TextView departure;
+    private static TextView destination;
+    int flag=0; //this is for checking user enters into departure or destination
+    Handler handler = new Handler();
 
     public Route_Select() {
         // Required empty public constructor
@@ -75,6 +83,7 @@ public class Route_Select extends Fragment implements View.OnClickListener {
         //Disable StrictMode.ThreadPolicy to perform network calls in the UI thread.
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+
     }
     private GpsInfo newGps;
 
@@ -121,38 +130,37 @@ public class Route_Select extends Fragment implements View.OnClickListener {
         //startMarker.setIcon(ContextCompat.getDrawable(getActivity(),R.mipmap.ic_launcher));
         //startMarker.setTitle("Start point");
 
+
+
         //toolbar(from fragment to fragment)
         Toolbar toolbar1 = (Toolbar) v.findViewById(R.id.toolbar1);
+        Toolbar toolbar2 = (Toolbar) v.findViewById(R.id.toolbar2);
+
+        departure = toolbar1.findViewById(R.id.departure);
+        destination = toolbar2.findViewById(R.id.destination);
+
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar1);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar1.findViewById(R.id.toolbar_title1).setOnClickListener(new View.OnClickListener() {
+        //출발점 선정
+        toolbar1.findViewById(R.id.departure).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                flag = 0;
                 ((MainActivity) getActivity()).replaceFragment(4);
-
-
-//                Toast.makeText(
-//                        getActivity(),
-//                         "출발점",
-//                        Toast.LENGTH_LONG).show();
-
             }
         });
-        Toolbar toolbar2 = (Toolbar) v.findViewById(R.id.toolbar2);
+        //도착점 선정
+
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar2);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar2.findViewById(R.id.toolbar_title2).setOnClickListener(new View.OnClickListener() {
+        toolbar2.findViewById(R.id.destination).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.i("******여기 두번째 툴바","여기 왔당");
+                flag=1;
                 ((MainActivity) getActivity()).replaceFragment(4);
-
-//                Toast.makeText(
-//                        getActivity(),
-//                        "도착점",
-//                        Toast.LENGTH_LONG).show();
             }
         });
-
 
         GraphHopperRoadManager roadManager = new GraphHopperRoadManager("7d7c5e0b-8521-4a3c-8eec-9ede1047d099", true);
         roadManager.addRequestOption("vehicle=foot");
@@ -181,6 +189,43 @@ public class Route_Select extends Fragment implements View.OnClickListener {
 
         callPermission();
         return v;
+    }
+
+
+    public void setText(final String text) {
+        Log.i("setText부분","값 변경해주는 곳");
+        //여기서 텍스트뷰를 정해주지 말고 받은 값에 따라 선정 필요.
+        if(flag==0) {
+            Thread t = new Thread() {
+                public void run() {
+                    handler.post(new Runnable() {
+                        public void run() {
+                            departure.setText(text);
+                            Log.i("텍스트 고치는 곳1",text);
+                            departure.setTextColor(getResources().getColor(R.color.buildingname));
+                            ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
+                        }
+                    });
+                }
+            };
+            t.start();
+
+        }else if(flag==1) {
+            Thread t = new Thread() {
+                public void run() {
+                    handler.post(new Runnable() {
+                        public void run() {
+                            departure.setText(text);
+                            departure.setTextColor(getResources().getColor(R.color.buildingname));
+                            ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
+                            Log.i("텍스트 고치는 곳2","들어왔어");
+                        }
+                    });
+                }
+            };
+            t.start();
+
+        }
     }
 
     @Override
@@ -327,21 +372,10 @@ public class Route_Select extends Fragment implements View.OnClickListener {
         return false;
     }
 
-    /**
-     * An appropriate place to override and add overlays.
-     */
     protected void addOverlays() {
         //
     }
 
-    public boolean skipOnCiTests() {
-        return true;
-    }
-
-    /**
-     * optional place to put automated test procedures, used during the connectCheck tests
-     * this is called OFF of the UI thread. block this method call util the test is done
-     */
     public void runTestProcedures() throws Exception {
 
     }
@@ -365,7 +399,6 @@ public class Route_Select extends Fragment implements View.OnClickListener {
             isPermission = true;
         }
     }
-
     // 전화번호 권한 요청
     private void callPermission() {
         // Check the SDK version and whether the permission is already granted or not.

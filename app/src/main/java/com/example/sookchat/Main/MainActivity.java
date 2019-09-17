@@ -1,18 +1,18 @@
 package com.example.sookchat.Main;
 
+
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.example.sookchat.Agora.AgoraFragment;
 import com.example.sookchat.FragmentReplaceable;
-import com.example.sookchat.Main.SplashActivity;
 import com.example.sookchat.MapFragment;
 import com.example.sookchat.Map_Select;
 import com.example.sookchat.R;
@@ -21,7 +21,9 @@ import com.example.sookchat.Route_Select_list;
 import com.example.sookchat.Tour_Select;
 import com.example.sookchat.Watson.ChatbotFragment;
 
-public class MainActivity extends AppCompatActivity implements FragmentReplaceable {
+import okhttp3.Route;
+
+public class MainActivity extends AppCompatActivity implements FragmentReplaceable,Route_Select_list.OnFragmentInteractionListener {
 
     // FrameLayout에 각 메뉴의 Fragment를 바꿔 줌
     private FragmentManager fragmentManager = getSupportFragmentManager();
@@ -35,10 +37,12 @@ public class MainActivity extends AppCompatActivity implements FragmentReplaceab
     private MapFragment mapFragment = new MapFragment();
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         //splash
         Intent intent = new Intent(this, SplashActivity.class);
         startActivity(intent);
@@ -73,6 +77,12 @@ public class MainActivity extends AppCompatActivity implements FragmentReplaceab
                 return true;
             }
         });
+
+    }
+
+    @Override
+    public void onFragmentInteraction(String text) {
+        routeFragment.setText(text);
     }
 
     public void replaceFragment(int fragmentId){
@@ -103,4 +113,5 @@ public class MainActivity extends AppCompatActivity implements FragmentReplaceab
         //fragment의 변경사항을 반영시킨다.
         transaction.commit();
     }
+
 }

@@ -30,6 +30,7 @@
         <item name="android:background">#000000</item>
     </style>
 
+    <color name="buildingname">#80B4ED</color>
 
 
 </resources>
