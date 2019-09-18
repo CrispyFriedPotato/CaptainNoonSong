@@ -23,7 +23,7 @@ import com.example.sookchat.Watson.ChatbotFragment;
 
 import okhttp3.Route;
 
-public class MainActivity extends AppCompatActivity implements FragmentReplaceable,Route_Select_list.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements FragmentReplaceable ,Route_Select_list.OnFragmentInteractionListener {
 
     // FrameLayout에 각 메뉴의 Fragment를 바꿔 줌
     private FragmentManager fragmentManager = getSupportFragmentManager();

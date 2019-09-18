@@ -17,12 +17,15 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.os.Bundle;
 import android.support.v4.content.res.ResourcesCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Switch;
@@ -30,6 +33,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 //import com.google.android.gms.maps.model.Marker;
@@ -38,6 +43,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.bonuspack.clustering.MarkerClusterer;
 import org.osmdroid.bonuspack.clustering.StaticCluster;
+import org.osmdroid.bonuspack.location.NominatimPOIProvider;
 import org.osmdroid.bonuspack.routing.Road;
 import org.osmdroid.bonuspack.routing.RoadNode;
 import org.osmdroid.config.Configuration;
@@ -55,34 +61,96 @@ import java.util.Iterator;
 import java.util.List;
 
 
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Build;
+import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+
+import static com.example.sookchat.MyGPS.campus;
+
+
 public class Tour_View<gPt> extends Activity {
-    // NaverMap API 3.0
     MapView mMapView = null;
-    //private MapView mapView;
-    //private LocationButtonView locationButtonView;
 
     //for transfering between fragment and activity
     private int tourId;
+
+    //LOG
     private static final String LOG_TAG = "Tour_View";
     private static final String TAG = "*********Tour_View";
-    private Button descButton;
+    protected static int markerId;
     private Button GPSButton;
-    private int buildingnum;
-    private ArrayList<Integer> routeList;
+    protected static boolean markerColor;
+    protected static int markerNumber;
     private ArrayList<GeoPoint> geoList;
-    private int sp;
+    private static int campus = 0;
+    //Buttons
+    private Button descButton;
+    //for getting the starting point building from MyGPS.java
+    private int buildingnum=5;
+    //Lists for drawing polyline
+    private ArrayList<Integer> routeList;
+    private ArrayList<String> buildingList;
+    //Drawable nodeIcon = getResources().getDrawable(R.drawable.button_bg);
+    //Marker currentLocation = new Marker(mMapView);
+    private Marker currentLocation = null;
+    final LocationListener gpsLocationListener = new LocationListener() {
+        public void onLocationChanged(Location location) {
+
+            String provider = location.getProvider();
+            double longitude = location.getLongitude();
+            double latitude = location.getLatitude();
+            double altitude = location.getAltitude();
+
+            drawMarker(latitude,longitude);
+
+        }
+
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+        }
+
+        public void onProviderEnabled(String provider) {
+        }
+
+        public void onProviderDisabled(String provider) {
+        }
+    };
 
 
     public Tour_View() {
     }
+    private String building = "건물을 알 수 없습니다";
 
+    public void drawMarker(double latitude,double longitude){
+        Drawable nodeIcon = getResources().getDrawable(R.drawable.button_bg);
+        //Marker currentLocation = new Marker(mMapView);
+        if(currentLocation != null) currentLocation.remove(mMapView);
+
+
+        currentLocation = new Marker(mMapView);
+        currentLocation.setIcon(nodeIcon);
+        currentLocation.setPosition(new GeoPoint(latitude,longitude));
+        mMapView.getOverlays().add(currentLocation);
+
+    }
 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
 
+        //Starting mapview
         MapsInitializer.initialize(getApplicationContext());
         super.onCreate(savedInstanceState);
 
         Context ctx = getApplicationContext();
+
         //important! set your user agent to prevent getting banned from the osm servers
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
         Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
@@ -91,11 +159,30 @@ public class Tour_View<gPt> extends Activity {
         mMapView = (MapView) findViewById(R.id.tour_view_map);
         mMapView.setTileSource(TileSourceFactory.MAPNIK);
 
+
+        //mMapView touchevent
+
+//        mMapView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Toast toast = Toast.makeText(
+//                        getApplicationContext(),
+//                        "View touched",
+//                        Toast.LENGTH_LONG
+//                );
+//                toast.show();
+//
+//            }
+//        });
+
+
+        //map controller
         IMapController mapController = mMapView.getController();
-        mapController.setZoom(17.5);
-        GeoPoint startPoint = new GeoPoint(37.545128, 126.964523);
+        mapController.setZoom(19);
+        GeoPoint startPoint = new GeoPoint(37.545871, 126.964413);
         mapController.setCenter(startPoint);
 
+        //for choosing campus 1 and 2
         Intent intent = getIntent();
         tourId = intent.getIntExtra("tourId", 0);
         Log.e(TAG, "tourId = " + tourId);
@@ -104,6 +191,7 @@ public class Tour_View<gPt> extends Activity {
             gpsCheck();
         }
 
+        //Description button
         descButton = (Button) findViewById(R.id.desc_button);
 
         descButton.setOnClickListener(new View.OnClickListener() {
@@ -118,23 +206,96 @@ public class Tour_View<gPt> extends Activity {
         });
 
 
+        //GPSButton for starting point
         GPSButton = (Button) findViewById(R.id.getGPS_button);
 
         GPSButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e(TAG, ": called.");
-                Intent intent = new Intent(Tour_View.this, MyGPS.class);
-                intent.putExtra("tourid", tourId);
-                startActivity(intent);
 
-                buildingnum = MyGPS.campus;
+                Log.e(TAG, ": called.");
+//                //move to MyGPS fragment
+//                Intent intent = new Intent(Tour_View.this, MyGPS.class);
+//                intent.putExtra("tourid", tourId);
+//                startActivity(intent);
+
+                //get starting point and save to variable buildingnum
+                buildingnum = getStartPoint();
+
+                //Important! this is for the NullpointException. user should click the button again.
+                if (buildingnum > 0) {
+                    ArrayList<Integer> route = getRoute(buildingnum);
+                    getLine(tourId, route, geoList);
+                    mMapView.getOverlays();
+
+//
+//                    long downTime = SystemClock.uptimeMillis();
+//                    long eventTime = SystemClock.uptimeMillis() + 100;
+//                    float x = 0.0f;
+//                    float y = 0.0f;
+//                    int metaState = 0;
+//                    MotionEvent motionEvent = MotionEvent.obtain(
+//                            downTime,
+//                            eventTime,
+//                            MotionEvent.ACTION_UP,
+//                            x,
+//                            y,
+//                            metaState
+//                    );
+//                    mMapView.dispatchTouchEvent(motionEvent);
+
+
+
+
+                }
+                else {
+                    //Alert문
+                    AlertDialog.Builder builder = new AlertDialog.Builder(Tour_View.this);
+                    builder.setMessage("캠퍼스 내의 위치를 파악할 수 없습니다.")
+                            .setCancelable(false)
+                            .setPositiveButton("okay",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
+                                        }
+                                    });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+
+                    while(buildingnum < 0){
+                        buildingnum = getStartPoint();
+                    }
+
+                }
+
+
+
 
             }
+
+
+
+
+
+
         });
 
+
+
+        getLocation();
+
+
+        //generating info of buildings in the list
         //모든 건물에 대한 gps정보가 들어있는 배열 geoList
         geoList = new ArrayList<GeoPoint>();
+        buildingList = new ArrayList<String>();
+
+        buildingList.add("새힘관");
+        buildingList.add("명신관");
+        buildingList.add("진리관");
+        buildingList.add("순헌관");
+        buildingList.add("학생회관");
+        buildingList.add("행정관");
 
         GeoPoint gPt1 = new GeoPoint(37.545412, 126.96391); //새힘 geolist index 0에 해당
         GeoPoint gPt2 = new GeoPoint(37.545699, 126.96366); //명신
@@ -177,29 +338,168 @@ public class Tour_View<gPt> extends Activity {
         geoList.add(gPt17);
 
 
-        //sp  = buildingnum;
-        ArrayList<Integer> route = getRoute(sp);
-        getLine(tourId, route, geoList);
 
-
-//        startActivity(new Intent(Tour_View.this, LocationFinder.class));
 
 
     }
 
+    //currentLocation 확인 및 마커 표시 함수
+    public void getLocation(){
 
-    private int getStartPoint(int sp) {
-        Log.e(TAG, "getStartPoint: called.");
-        return sp; //박물관 시작
+        final LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        Log.i(TAG, "1");
+        if ( Build.VERSION.SDK_INT >= 23 &&
+                ContextCompat.checkSelfPermission( getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
+            Log.i(TAG, "2");
+            ActivityCompat.requestPermissions( Tour_View.this, new String[] {  android.Manifest.permission.ACCESS_FINE_LOCATION  },
+                    0 );
+        }
+        else{
+
+            Log.i(TAG, "mygps is working well in tourview");
+
+            String provider = LocationManager.NETWORK_PROVIDER;
+
+            Location location = lm.getLastKnownLocation(provider);
+
+
+            double longitude = location.getLongitude();
+            double latitude = location.getLatitude();
+
+            drawMarker(latitude,longitude);
+
+
+            Log.i(TAG, "marker code is read.");
+
+
+
+
+            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                    500,
+                    1,
+                    gpsLocationListener);
+            lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                    500,
+                    1,
+                    gpsLocationListener);
+
+        }
+
+        Log.i(TAG, "3");
+
     }
 
+
+
+
+
+
+
+    //시작위치 파악
+
+    private int getStartPoint() {
+//        Log.e(TAG, "getStartPoint: called.");
+//        return sp; //박물관 시작
+
+        final LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        Log.i(TAG, "1");
+        if ( Build.VERSION.SDK_INT >= 23 &&
+                ContextCompat.checkSelfPermission( getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
+            Log.i(TAG, "2");
+            ActivityCompat.requestPermissions( Tour_View.this, new String[] {  android.Manifest.permission.ACCESS_FINE_LOCATION  },
+                    0 );
+        }
+        else{
+
+            Log.i(TAG, "mygps is working well in tourview");
+
+            String provider = LocationManager.NETWORK_PROVIDER;
+
+            Location location = lm.getLastKnownLocation(provider);
+
+
+            double longitude = location.getLongitude();
+            double latitude = location.getLatitude();
+
+            if(longitude>126.963275 && longitude<126.964115){
+                if(latitude>37.546212 &&latitude<37.546789){
+                    building = "진리관";
+                    campus = 3;
+                }
+            }
+
+            if(longitude>126.964115 &&longitude<126.965534){
+                if(latitude>37.545991 &&latitude<37.546789){
+                    building = "순헌관";
+                    campus = 4;
+                }
+            }
+
+            if(longitude>126.963275 &&longitude<126.964115){
+                if(latitude>37.545600 && latitude<37.546212){
+                    building = "명신관";
+                    campus = 2;
+                }
+            }
+
+            if(longitude>126.963275 &&longitude<126.964115){
+                if(latitude>37.545076 &&latitude<37.545600){
+                    building = "새힘관";
+                    campus = 1;
+                }
+            }
+
+            if(longitude>126.964115 &&longitude<126.964802){
+                if(latitude>37.545076 && latitude<37.545991){
+                    building = "행정관";
+                    campus = 6;
+                }
+            }
+
+            if(longitude>126.964802 &&longitude<126.965534){
+                if(latitude>37.545076 &&latitude<37.545991){
+                    building = "학생회관";
+                    campus = 5;
+                }
+            }
+
+
+
+
+            //update막아놓음
+
+
+//            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+//                    500,
+//                    1,
+//                    gpsLocationListener);
+//            lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+//                    500,
+//                    1,
+//                    gpsLocationListener);
+
+        }
+
+        return campus;
+
+    }
+
+
+
+
+    //GPSButton 내에서 사용되는 route 구하는 함수
     private ArrayList<Integer> getRoute(int sp) {
         Log.e(TAG, "getRoute: called.");
         routeList = new ArrayList<Integer>();
 
         LatLng Pt1 = new LatLng(37.545412, 126.96391);
+
+
+        //2캠퍼스
         if (tourId == 2) {
-            sp = 9;
+            sp = buildingnum;
             routeList.add(sp);
             routeList.add(10);
             routeList.add(11);
@@ -208,11 +508,14 @@ public class Tour_View<gPt> extends Activity {
             routeList.add(8);
 
 
-        } else if (tourId == 1) {
+        }
+        //1캠퍼스
+        else if (tourId == 1) {
+            //MyGPS 의 campus값을 starting point 로 저장
+            sp = buildingnum;
 
-            sp = 3;
 
-
+            //6개의 건물 반복
             for (int i = 0; i < 6; i++) {
 
                 if (sp <= 6) {
@@ -222,12 +525,12 @@ public class Tour_View<gPt> extends Activity {
                 }
 
 
-
-
+                //nodeIcon 초기화 값 핑크마커
                 Drawable nodeIcon = getResources().getDrawable(R.drawable.button_bg);
 
 
 
+                //list 추가된 순서에 따라 마커 아이콘 변경 하는 switch 문
                 switch(i){
 
                     case 0:
@@ -260,22 +563,82 @@ public class Tour_View<gPt> extends Activity {
                 }
 
 
-                Marker nodeMarker = new Marker(mMapView);
+                //marker 생성
+                final Marker nodeMarker = new Marker(mMapView);
 
+
+
+                //marker 위도 경도 고정. sp-1 : list의 index와 일치
                 if (sp <= 6) {
                     nodeMarker.setPosition(new GeoPoint(geoList.get(sp-1).getLatitude(),geoList.get(sp-1).getLongitude()));
+                    nodeMarker.setTitle(buildingList.get(sp-1));
                     sp++;
                 } else {
                     nodeMarker.setPosition(new GeoPoint(geoList.get(sp-7).getLatitude(),geoList.get(sp-7).getLongitude()));
+                    nodeMarker.setTitle(buildingList.get(sp-7));
                     sp++;
                 }
 
+
+                //marker 이미지 저장
                 nodeMarker.setIcon(nodeIcon);
 
 
-                int j = i+1;
-                nodeMarker.setTitle("Step "+j);
+                //marker 클릭 이벤트 생성
+                nodeMarker.setOnMarkerClickListener(new Marker.OnMarkerClickListener() {
+                    @Override
+                    public boolean onMarkerClick(Marker marker, MapView mapView) {
+                        String j = nodeMarker.getTitle();
 
+                        if(j == "새힘관"){
+                            markerId=4;
+                            Intent intent = new Intent(Tour_View.this, MapDescActivity.class);
+                            intent.putExtra("tourid", tourId);
+                            startActivity(intent);
+                        }
+
+                        if(j == "명신관"){
+                            markerId=3;
+                            Intent intent = new Intent(Tour_View.this, MapDescActivity.class);
+                            intent.putExtra("tourid", tourId);
+                            startActivity(intent);
+                        }
+
+                        if(j == "진리관"){
+                            markerId=1;
+                            Intent intent = new Intent(Tour_View.this, MapDescActivity.class);
+                            intent.putExtra("tourid", tourId);
+                            startActivity(intent);
+                        }
+
+                        if(j == "순헌관"){
+                            markerId=2;
+                            Intent intent = new Intent(Tour_View.this, MapDescActivity.class);
+                            intent.putExtra("tourid", tourId);
+                            startActivity(intent);
+                        }
+
+                        if(j == "학생회관"){
+                            markerId=6;
+                            Intent intent = new Intent(Tour_View.this, MapDescActivity.class);
+                            intent.putExtra("tourid", tourId);
+                            startActivity(intent);
+                        }
+
+                        if(j == "행정관"){
+                            markerId=5;
+                            Intent intent = new Intent(Tour_View.this, MapDescActivity.class);
+                            intent.putExtra("tourid", tourId);
+                            startActivity(intent);
+                        }
+
+
+                        return false;
+                    }
+                });
+
+
+                //map에 마커 표시
                 mMapView.getOverlays().add(nodeMarker);
 
 
@@ -288,26 +651,11 @@ public class Tour_View<gPt> extends Activity {
         return routeList;
     }
 
-    public Bitmap writeOnDrawable(int drawableId, String text, int TextSize){
-
-        Bitmap bm = BitmapFactory.decodeResource(getResources(), drawableId).copy(Bitmap.Config.ARGB_8888, true);
-        //BitmapFactory.decodeResource(getResources(),R.drawable.button_bg);
-
-        Paint paint = new Paint();
-        paint.setStyle(Paint.Style.FILL);
-        //paint.setColor(Color.BLACK);
-        paint.setTextSize(TextSize);
-        paint.setTextAlign(Paint.Align.CENTER);
-
-        Canvas canvas = new Canvas(bm);
-        canvas.drawText(text,bm.getWidth()/2 , bm.getHeight()/2, paint);
-
-        return bm;
-    }
 
 
 
 
+    //polyline 그리는 함수
     private void getLine(int tourId, ArrayList<Integer> routeList, ArrayList<GeoPoint> geoList) {
         Log.e(TAG, "getLine: called.");
         Log.e("tourId", "" + tourId);
@@ -327,12 +675,14 @@ public class Tour_View<gPt> extends Activity {
                 return false;
             }
         });
+
         mMapView.getOverlayManager().add(line);
 
 
     }
 
 
+    //gps 켜져있는지 확인
     private void gpsCheck() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("계속하려면 위치 기능 설정이 필요합니다.")
@@ -389,6 +739,8 @@ public class Tour_View<gPt> extends Activity {
         super.onLowMemory();
 
     }
+
+
 
 
 

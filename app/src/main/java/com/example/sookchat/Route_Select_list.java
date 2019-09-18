@@ -107,7 +107,6 @@ public class Route_Select_list extends Fragment {
                 if(mListener != null){
                     String input = list.get(position);
                     mListener.onFragmentInteraction(input);
-                    Log.i("위치값 받았나?","아마도");
                 }
 //                Toast.makeText(getActivity(),list.get(position),Toast.LENGTH_LONG).show();
                 ((MainActivity)getActivity()).replaceFragment(5);

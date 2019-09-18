@@ -2,21 +2,23 @@ package com.example.sookchat;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
@@ -57,7 +59,7 @@ public class Route_Select extends Fragment implements View.OnClickListener {
 
     private final int PERMISSIONS_ACCESS_FINE_LOCATION = 1000;
     private final int PERMISSIONS_ACCESS_COARSE_LOCATION = 1001;
-    public LocationManager lm;
+
     IMapController mapController;
     ArrayList<GeoPoint> waypoints;
     int MENU_VERTICAL_REPLICATION = 0;
@@ -65,17 +67,27 @@ public class Route_Select extends Fragment implements View.OnClickListener {
     int MENU_ROTATE_CLOCKWISE = 0;
     int MENU_ROTATE_COUNTER_CLOCKWISE = 0;
     int MENU_SCALE_TILES = 0;
+    public String important;
+    protected MapView mMapView;
+    int flag=3; //this is for checking user enters into departure or destination
 
-    private static TextView departure;
-    private static TextView destination;
-    int flag=0; //this is for checking user enters into departure or destination
-    Handler handler = new Handler();
+
+    TextView departure;
+    TextView destination;
+    Toolbar toolbar1;
+    Toolbar toolbar2;
+    Handler mHandler=null;
+    View rootView;
+    private Marker currentLocation = null;
+    private boolean isAccessFineLocation = false;
+    private boolean isAccessCoarseLocation = false;
+    private boolean isPermission = false;
+    private GpsInfo newGps;
+
 
     public Route_Select() {
         // Required empty public constructor
     }
-
-    protected MapView mMapView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,20 +95,14 @@ public class Route_Select extends Fragment implements View.OnClickListener {
         //Disable StrictMode.ThreadPolicy to perform network calls in the UI thread.
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-
     }
-    private GpsInfo newGps;
-
-    private boolean isAccessFineLocation = false;
-    private boolean isAccessCoarseLocation = false;
-    private boolean isPermission = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        View v = inflater.inflate(R.layout.fragment_route_select, container, false);
-        mMapView = v.findViewById(R.id.route_select_map);
+         Handler mHandler = new Handler(Looper.getMainLooper());
+         // LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        rootView = inflater.inflate(R.layout.fragment_route_select, container, false);
+        mMapView =rootView.findViewById(R.id.route_select_map);
         Context ctx = getActivity().getApplicationContext();
         //important! set your user agent to prevent getting banned from the osm servers
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
@@ -107,6 +113,8 @@ public class Route_Select extends Fragment implements View.OnClickListener {
         mapController = mMapView.getController();
         mapController.setZoom(17.5);
 
+        //사용자 위치 gps 버튼
+//        getLocation();
 
         //Setting start and end points
         waypoints = new ArrayList<GeoPoint>();
@@ -129,38 +137,6 @@ public class Route_Select extends Fragment implements View.OnClickListener {
         //마커 클릭시 생기는 버블 안의 text
         //startMarker.setIcon(ContextCompat.getDrawable(getActivity(),R.mipmap.ic_launcher));
         //startMarker.setTitle("Start point");
-
-
-
-        //toolbar(from fragment to fragment)
-        Toolbar toolbar1 = (Toolbar) v.findViewById(R.id.toolbar1);
-        Toolbar toolbar2 = (Toolbar) v.findViewById(R.id.toolbar2);
-
-        departure = toolbar1.findViewById(R.id.departure);
-        destination = toolbar2.findViewById(R.id.destination);
-
-        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar1);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
-        //출발점 선정
-        toolbar1.findViewById(R.id.departure).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                flag = 0;
-                ((MainActivity) getActivity()).replaceFragment(4);
-            }
-        });
-        //도착점 선정
-
-        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar2);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar2.findViewById(R.id.destination).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i("******여기 두번째 툴바","여기 왔당");
-                flag=1;
-                ((MainActivity) getActivity()).replaceFragment(4);
-            }
-        });
 
         GraphHopperRoadManager roadManager = new GraphHopperRoadManager("7d7c5e0b-8521-4a3c-8eec-9ede1047d099", true);
         roadManager.addRequestOption("vehicle=foot");
@@ -187,46 +163,173 @@ public class Route_Select extends Fragment implements View.OnClickListener {
             //handle error... warn the user, etc.
         }
 
+        //toolbar(from fragment to fragment)
+        toolbar1 =(Toolbar)rootView.findViewById(R.id.toolbar1);
+        toolbar2 =(Toolbar)rootView.findViewById(R.id.toolbar2);
+
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar1);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
+        //출발점 선정
+        toolbar1.findViewById(R.id.departure).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                important="출발점";
+                Log.i("******여기 첫번째 툴바","여기 왔당");
+                flag = 0;
+                ((MainActivity) getActivity()).replaceFragment(4);
+            }
+        });
+        //도착점 선정
+
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar2);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbar2.findViewById(R.id.destination).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                important="도착점";
+                Log.i("******여기 두번째 툴바","여기 왔당");
+                flag=1;
+                ((MainActivity) getActivity()).replaceFragment(4);
+            }
+        });
+
+        // anywhere else in your code
+        mHandler.post(new Runnable() {
+            public void run() {
+                if (important == null) {
+
+                } else { //when toolbar is pressed
+                    // Update UI elements
+                    Toast.makeText(getContext(), important, Toast.LENGTH_SHORT).show();
+                    if (flag == 0) {
+                        departure.setText("hi");
+                        departure.setTextColor(getResources().getColor(R.color.buildingname));
+                    } else if (flag == 1) {
+                        destination.setText(important);
+                        destination.setTextColor(getResources().getColor(R.color.buildingname));
+
+                    }
+                }
+            }
+        });
+
+
         callPermission();
-        return v;
+        return rootView;
+    }
+    public void setText(String text) {
+        important = text;
     }
 
 
-    public void setText(final String text) {
-        Log.i("setText부분","값 변경해주는 곳");
-        //여기서 텍스트뷰를 정해주지 말고 받은 값에 따라 선정 필요.
-        if(flag==0) {
-            Thread t = new Thread() {
-                public void run() {
-                    handler.post(new Runnable() {
-                        public void run() {
-                            departure.setText(text);
-                            Log.i("텍스트 고치는 곳1",text);
-                            departure.setTextColor(getResources().getColor(R.color.buildingname));
-                            ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
-                        }
-                    });
-                }
-            };
-            t.start();
-
-        }else if(flag==1) {
-            Thread t = new Thread() {
-                public void run() {
-                    handler.post(new Runnable() {
-                        public void run() {
-                            departure.setText(text);
-                            departure.setTextColor(getResources().getColor(R.color.buildingname));
-                            ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
-                            Log.i("텍스트 고치는 곳2","들어왔어");
-                        }
-                    });
-                }
-            };
-            t.start();
-
-        }
-    }
+//
+//    //gps 켜져있는지 확인
+//    private void gpsCheck() {
+//        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+//        builder.setMessage("계속하려면 위치 기능 설정이 필요합니다.")
+//                .setCancelable(false)
+//                .setPositiveButton("확인",
+//                        new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int id) {
+//                                turnOnGps();
+//                            }
+//                        })
+//                .setNegativeButton("아니요",
+//                        new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int id) {
+//                                dialog.cancel();
+//                            }
+//                        });
+//        AlertDialog alert = builder.create();
+//        alert.show();
+//    }
+//    // show GPS Options
+//    private void turnOnGps() {
+//        Intent gpsOptionsIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+//        startActivity(gpsOptionsIntent);
+//    }
+//
+//    //user location marker function
+//    public void drawMarker(double latitude,double longitude){
+//        Drawable nodeIcon = getResources().getDrawable(R.drawable.button_bg);
+//        //Marker currentLocation = new Marker(mMapView);
+//        if(currentLocation != null) currentLocation.remove(mMapView);
+//
+//
+//        currentLocation = new Marker(mMapView);
+//        currentLocation.setIcon(nodeIcon);
+//        currentLocation.setPosition(new GeoPoint(latitude,longitude));
+//        mMapView.getOverlays().add(currentLocation);
+//
+//    }
+//
+//    //gps 표시 함수
+//    final LocationListener gpsLocationListener = new LocationListener() {
+//        public void onLocationChanged(Location location) {
+//
+//            double longitude = location.getLongitude();
+//            double latitude = location.getLatitude();
+//
+//            drawMarker(latitude,longitude);
+//
+//        }
+//
+//        public void onStatusChanged(String provider, int status, Bundle extras) {
+//        }
+//
+//        public void onProviderEnabled(String provider) {
+//        }
+//
+//        public void onProviderDisabled(String provider) {
+//        }
+//    };
+//
+//    //currentLocation 확인 및 마커 표시 함수
+//    public void getLocation(){
+//
+//        final LocationManager lm = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
+//
+//        Log.i(TAG, "1");
+//        if ( Build.VERSION.SDK_INT >= 23 &&
+//                ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
+//            Log.i(TAG, "2");
+//            ActivityCompat.requestPermissions( getActivity(), new String[] {  android.Manifest.permission.ACCESS_FINE_LOCATION  },
+//                    0 );
+//        }
+//        else{
+//
+//            Log.i(TAG, "mygps is working well in tourview");
+//
+//            String provider = LocationManager.NETWORK_PROVIDER;
+//
+//            Location location = lm.getLastKnownLocation(provider);
+//
+//            while (location == null) {
+//                location = lm.getLastKnownLocation(provider);
+//            }
+//
+//            double longitude = location.getLongitude();
+//            double latitude = location.getLatitude();
+//
+//            drawMarker(latitude,longitude);
+//
+//
+//            Log.i(TAG, "marker code is read.");
+//
+//            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+//                    500,
+//                    1,
+//                    gpsLocationListener);
+//            lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+//                    500,
+//                    1,
+//                    gpsLocationListener);
+//
+//        }
+//
+//        Log.i(TAG, "3");
+//
+//    }
 
     @Override
     public void onPause() {
@@ -276,6 +379,7 @@ public class Route_Select extends Fragment implements View.OnClickListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mHandler.getLooper().quit();
         Log.d(TAG, "onDestroy");
 
     }

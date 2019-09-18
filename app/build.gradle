@@ -44,5 +44,7 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:3.0.0'
     implementation 'org.osmdroid:osmdroid-android:6.1.0'
     implementation 'com.github.MKergall:osmbonuspack:6.6.0'
+//    implementation 'com.naver.maps:map-sdk:3.4.0'
+    implementation 'com.google.android.gms:play-services-location:11.0.1'
 
 }
