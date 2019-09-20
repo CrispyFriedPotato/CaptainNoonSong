@@ -7,34 +7,66 @@
     android:id="@+id/route_select_list"
     >
 
-            <EditText
-                android:id="@+id/editTextFilter"
-                android:layout_width="316dp"
-                android:layout_toRightOf="@id/backarrow"
-                android:layout_height="wrap_content"
-                android:hint="건물을 검색하세요"
-                android:divider="#999999"
-                android:dividerHeight="1dp"
-               />
+    <Button
+        android:id="@+id/button_go"
+        android:layout_width="69dp"
+        android:layout_height="36dp"
+        android:layout_below="@id/locationReset"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="-82dp"
+        android:background="#A975AAD8"
+        android:text="GO"
+        android:textAlignment="center"
+        android:textColor="#DD04123A"
+        android:textColorHighlight="#FFFFFF"
+        android:textStyle="bold" />
 
-            <ImageView
-               android:id="@+id/locationReset"
-               android:layout_width="45dp"
-               android:layout_height="45dp"
-               android:layout_alignParentTop="true"
-               android:layout_alignParentRight="true"
-               android:layout_toRightOf="@id/editTextFilter"
-               android:src="@drawable/ic_menu_mylocation" />
+    <EditText
+        android:id="@+id/editTextFilter2"
+        android:layout_width="274dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/backarrow"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="82dp"
+        android:divider="#999999"
+        android:dividerHeight="1dp"
+        android:hint="도착점을 입력하세요" />
 
-            <ImageView
-                android:id="@+id/backarrow"
-                android:layout_width="49dp"
-                android:layout_height="40dp"
-                app:srcCompat="@drawable/back" />
+    <EditText
+        android:id="@+id/editTextFilter1"
+        android:layout_width="276dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="11dp"
+        android:layout_marginEnd="0dp"
+        android:layout_toStartOf="@+id/button_go"
+        android:layout_toRightOf="@id/backarrow"
+        android:divider="#999999"
+        android:dividerHeight="1dp"
+        android:hint="출발점을 입력하세요" />
 
-            <ListView
+
+    <ImageView
+        android:id="@+id/locationReset"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="-2dp"
+        android:layout_marginRight="20dp"
+        android:src="@drawable/ic_menu_mylocation" />
+
+    <ImageView
+        android:id="@+id/backarrow"
+        android:layout_width="47dp"
+        android:layout_height="37dp"
+        app:srcCompat="@drawable/back" />
+
+    <ListView
                 android:id="@android:id/list"
-                android:layout_below="@id/editTextFilter"
+                android:layout_below="@id/editTextFilter2"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:textFilterEnabled="true" />

@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -14,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -24,16 +27,24 @@ import com.example.sookchat.Main.MainActivity;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.Route;
+
 public class Route_Select_list extends Fragment {
 
     private List<String> list;
     private ListView listview = null;
-    private EditText search;
+
     private RouteBuildingAdapter adapter;
     private ArrayList<String> _buildings=null;
-
-
+    public int flag = 3;
+    private Route_Select route_select;
+    private EditText search1;
     private OnFragmentInteractionListener mListener;
+    private EditText search2;
+    private FragmentManager fragmentManager;
+    private Fragment frs; //to save route_select fragment
+    private String departure;
+    private String destination;
 
     public Route_Select_list() {
         // Required empty public constructor
@@ -48,6 +59,7 @@ public class Route_Select_list extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+
         View v = inflater.inflate(R.layout.fragment_route_select_list,container,false);
 
         //뒤로가기 버튼
@@ -55,7 +67,10 @@ public class Route_Select_list extends Fragment {
         iv.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                ((MainActivity)getActivity()).replaceFragment(5);
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                fragmentManager.beginTransaction().remove(Route_Select_list.this).commit();
+                fragmentManager.popBackStack();//back button
+                //((MainActivity)getActivity()).replaceFragment(5);
             }
         });
 
@@ -67,11 +82,9 @@ public class Route_Select_list extends Fragment {
         btnNewLocation.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                ((MainActivity)getActivity()).replaceFragment(5);
+                //((MainActivity)getActivity()).replaceFragment(5);
             }
         });
-
-        search=v.findViewById(R.id.editTextFilter);
 
         listview = v.findViewById(android.R.id.list) ;
 
@@ -100,25 +113,86 @@ public class Route_Select_list extends Fragment {
         _buildings.addAll(list);
 
 
+
+
+        search1 = v.findViewById(R.id.editTextFilter1);
+        search2 = v.findViewById(R.id.editTextFilter2);
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(mListener != null){
-                    String input = list.get(position);
-                    mListener.onFragmentInteraction(input);
+                if(flag==0) {
+                    departure = list.get(position);
+                    search1.setText(departure);
+                    list.clear();
                 }
-//                Toast.makeText(getActivity(),list.get(position),Toast.LENGTH_LONG).show();
-                ((MainActivity)getActivity()).replaceFragment(5);
+                else if (flag==1){
+                    destination = list.get(position);
+                    search2.setText(destination);
+                    list.clear();
+                }
             }
+//
+//
+//
+//                 fragmentManager = getActivity().getSupportFragmentManager();
 
+//                if(frs ==null){
+//                    frs = new Route_Select();
+//                    fragmentManager.beginTransaction().add(R.id.frame_layout,frs).commit();
+//                }
+//                if(frs!=null) {
+//                    fragmentManager.beginTransaction().show(frs).commit();
+//                }
+
+            //fragmentManager.beginTransaction().hide(Route_Select_list.this).commit();
+//                FragmentTransaction transaction = fragmentManager.beginTransaction().remove(Route_Select_list.this);
+//                transaction.commit();
+//
+//                fragmentManager.popBackStack();
         });
 
+        Button buttonGo = v.findViewById(R.id.button_go);
 
-        search.addTextChangedListener(new TextWatcher() {
+        buttonGo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fragmentManager = getActivity().getSupportFragmentManager();
+
+                if(departure==null || destination==null){
+                    Toast.makeText(getActivity(), "출발지&목적지 둘다 입력하셔야 합니다.", Toast.LENGTH_SHORT).show();
+                }
+                if(mListener != null){
+                    mListener.onFragmentInteraction(departure,destination);
+                }
+               FragmentTransaction transaction = fragmentManager.beginTransaction().remove(Route_Select_list.this);
+               transaction.commit();
+               fragmentManager.popBackStack();
+
+            }
+        });
+
+        search1.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable edit) {
-                String text = search.getText().toString();
+                flag=0;
+                String text = search1.getText().toString();
+                search(text);
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+        }) ;
+        search2.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable edit) {
+                flag=1;
+                String text = search2.getText().toString();
                 search(text);
             }
 
@@ -165,8 +239,6 @@ public class Route_Select_list extends Fragment {
         adapter.notifyDataSetChanged();
     }
 
-
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -188,7 +260,7 @@ public class Route_Select_list extends Fragment {
 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(String text);
+        void onFragmentInteraction(String text1,String text2);
     }
 
 

@@ -81,8 +81,8 @@ public class MainActivity extends AppCompatActivity implements FragmentReplaceab
     }
 
     @Override
-    public void onFragmentInteraction(String text) {
-        routeFragment.setText(text);
+    public void onFragmentInteraction(String text1,String text2) {
+        routeFragment.setText(text1,text2);
     }
 
     public void replaceFragment(int fragmentId){
@@ -113,5 +113,6 @@ public class MainActivity extends AppCompatActivity implements FragmentReplaceab
         //fragment의 변경사항을 반영시킨다.
         transaction.commit();
     }
+
 
 }

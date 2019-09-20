@@ -6,9 +6,24 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
+
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+        <Button
+            android:id="@+id/route_button"
+            android:layout_width="176dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginRight="10dp"
+            android:background="#75E959"
+            android:fontFamily="sans-serif-condensed"
+            android:text="안내 시작하기"
+            android:textAlignment="center"
+            android:textColor="#F2FAF6F6"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <org.osmdroid.views.MapView
             android:id="@+id/route_select_map"
@@ -17,59 +32,10 @@
             android:layout_height="637dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginTop="0dp"
-            android:layout_marginBottom="-17dp">
+            android:layout_marginTop="-2dp"
+            android:layout_marginBottom="-15dp">
+
         </org.osmdroid.views.MapView>
 
-
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/appbar"
-        android:layout_width="match_parent"
-        android:layout_height="111dp"
-        android:background="@color/actionbar_opacity"
-        android:paddingTop="13dp">
-
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar1"
-            android:layout_width="398dp"
-            android:layout_height="42dp"
-            android:layout_gravity="bottom|center"
-            android:background="@drawable/rounded">
-
-            <TextView
-                android:id="@+id/departure"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="left"
-                android:fontFamily="casual"
-                android:text="출발지 검색"
-                android:textAllCaps="false"
-                android:textColor="#D3D3D3"
-                android:textSize="20sp" />
-
-        </android.support.v7.widget.Toolbar>
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar2"
-            android:layout_width="398dp"
-            android:layout_height="42dp"
-            android:layout_gravity="bottom|center"
-            android:background="@drawable/rounded">
-
-            <TextView
-                android:id="@+id/destination"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="left"
-                android:fontFamily="casual"
-                android:text="도착지 검색"
-                android:textAllCaps="false"
-                android:textColor="#D3D3D3"
-                android:textSize="20sp" />
-
-        </android.support.v7.widget.Toolbar>
-
-    </android.support.design.widget.AppBarLayout>
     </RelativeLayout>
 </LinearLayout>
