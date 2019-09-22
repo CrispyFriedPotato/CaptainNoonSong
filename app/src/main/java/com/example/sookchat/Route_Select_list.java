@@ -1,17 +1,12 @@
 package com.example.sookchat;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.ListFragment;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,13 +16,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
-
-import com.example.sookchat.Main.MainActivity;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import okhttp3.Route;
 
 public class Route_Select_list extends Fragment {
 
@@ -35,16 +26,16 @@ public class Route_Select_list extends Fragment {
     private ListView listview = null;
 
     private RouteBuildingAdapter adapter;
-    private ArrayList<String> _buildings=null;
+    private ArrayList<String> _buildings = null;
+    private ArrayList<String> _reset = null;
     public int flag = 3;
-    private Route_Select route_select;
     private EditText search1;
     private OnFragmentInteractionListener mListener;
     private EditText search2;
     private FragmentManager fragmentManager;
-    private Fragment frs; //to save route_select fragment
     private String departure;
     private String destination;
+
 
     public Route_Select_list() {
         // Required empty public constructor
@@ -70,19 +61,6 @@ public class Route_Select_list extends Fragment {
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 fragmentManager.beginTransaction().remove(Route_Select_list.this).commit();
                 fragmentManager.popBackStack();//back button
-                //((MainActivity)getActivity()).replaceFragment(5);
-            }
-        });
-
-
-//        사용자 위치 받아오는 버튼, ImageButton이었으나 ImageView로 바
-        ImageView btnNewLocation;
-        btnNewLocation = v.findViewById(R.id.locationReset);
-        btnNewLocation.setFocusable(false);
-        btnNewLocation.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                //((MainActivity)getActivity()).replaceFragment(5);
             }
         });
 
@@ -109,10 +87,10 @@ public class Route_Select_list extends Fragment {
         adapter = new RouteBuildingAdapter(list,getActivity()) ;
         listview.setAdapter(adapter);
 
-        _buildings = new ArrayList<String>();
+        _buildings = new ArrayList<>();
         _buildings.addAll(list);
-
-
+        _reset = new ArrayList<>();
+        _reset.addAll(list);
 
 
         search1 = v.findViewById(R.id.editTextFilter1);
@@ -122,34 +100,19 @@ public class Route_Select_list extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(flag==0) {
-                    departure = list.get(position);
-                    search1.setText(departure);
-                    list.clear();
+                        departure = list.get(position);
+                        search1.setText(departure);
+                        list.clear();
+                        list.addAll(_reset);
                 }
                 else if (flag==1){
                     destination = list.get(position);
                     search2.setText(destination);
                     list.clear();
+                    list.addAll(_reset);
                 }
             }
-//
-//
-//
-//                 fragmentManager = getActivity().getSupportFragmentManager();
 
-//                if(frs ==null){
-//                    frs = new Route_Select();
-//                    fragmentManager.beginTransaction().add(R.id.frame_layout,frs).commit();
-//                }
-//                if(frs!=null) {
-//                    fragmentManager.beginTransaction().show(frs).commit();
-//                }
-
-            //fragmentManager.beginTransaction().hide(Route_Select_list.this).commit();
-//                FragmentTransaction transaction = fragmentManager.beginTransaction().remove(Route_Select_list.this);
-//                transaction.commit();
-//
-//                fragmentManager.popBackStack();
         });
 
         Button buttonGo = v.findViewById(R.id.button_go);
@@ -159,7 +122,7 @@ public class Route_Select_list extends Fragment {
             public void onClick(View v) {
                 fragmentManager = getActivity().getSupportFragmentManager();
 
-                if(departure==null || destination==null){
+                while(departure==null || destination==null){
                     Toast.makeText(getActivity(), "출발지&목적지 둘다 입력하셔야 합니다.", Toast.LENGTH_SHORT).show();
                 }
                 if(mListener != null){
@@ -204,9 +167,6 @@ public class Route_Select_list extends Fragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
             }
         }) ;
-
-        // GPS 정보를 보여주기 위한 이벤트 클래스 등록
-        //btnNewLocation.setOnClickListener();
 
         return v;
     }

@@ -15,25 +15,24 @@
             android:id="@+id/route_button"
             android:layout_width="176dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
             android:layout_marginRight="10dp"
-            android:background="#75E959"
             android:fontFamily="sans-serif-condensed"
             android:text="안내 시작하기"
-            android:textAlignment="center"
-            android:textColor="#F2FAF6F6"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:background="@drawable/route_button_pressed"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp"/>
 
         <org.osmdroid.views.MapView
             android:id="@+id/route_select_map"
             tilesource="Mapnik"
             android:layout_width="match_parent"
-            android:layout_height="637dp"
+            android:layout_height="733dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentBottom="true"
             android:layout_marginTop="-2dp"
-            android:layout_marginBottom="-15dp">
+            android:layout_marginBottom="0dp">
 
         </org.osmdroid.views.MapView>
 

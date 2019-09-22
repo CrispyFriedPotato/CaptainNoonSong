@@ -9,15 +9,15 @@
 
     <Button
         android:id="@+id/button_go"
-        android:layout_width="69dp"
-        android:layout_height="36dp"
-        android:layout_below="@id/locationReset"
+        android:layout_width="74dp"
+        android:layout_height="81dp"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="0dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="3dp"
         android:layout_marginRight="-82dp"
         android:background="#A975AAD8"
-        android:text="GO"
+        android:text="GO!!!"
+        android:textSize="25sp"
         android:textAlignment="center"
         android:textColor="#DD04123A"
         android:textColorHighlight="#FFFFFF"
@@ -48,15 +48,15 @@
         android:hint="출발점을 입력하세요" />
 
 
-    <ImageView
-        android:id="@+id/locationReset"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="-2dp"
-        android:layout_marginRight="20dp"
-        android:src="@drawable/ic_menu_mylocation" />
+<!--    <ImageView-->
+<!--        android:id="@+id/locationReset"-->
+<!--        android:layout_width="45dp"-->
+<!--        android:layout_height="45dp"-->
+<!--        android:layout_alignParentTop="true"-->
+<!--        android:layout_alignParentRight="true"-->
+<!--        android:layout_marginTop="-2dp"-->
+<!--        android:layout_marginRight="20dp"-->
+<!--        android:src="@drawable/ic_menu_mylocation" />-->
 
     <ImageView
         android:id="@+id/backarrow"

@@ -2,27 +2,16 @@ package com.example.sookchat;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
-import android.support.design.widget.AppBarLayout;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,9 +21,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.sookchat.Main.MainActivity;
 
@@ -48,9 +34,10 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.CopyrightOverlay;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polyline;
+import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider;
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
-
 import static android.support.v4.content.PermissionChecker.checkSelfPermission;
 
 
@@ -102,10 +89,10 @@ public class Route_Select extends Fragment implements View.OnClickListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-         Handler mHandler = new Handler(Looper.getMainLooper());
-         // LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        Handler mHandler = new Handler(Looper.getMainLooper());
+        // LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         rootView = inflater.inflate(R.layout.fragment_route_select, container, false);
-        mMapView =rootView.findViewById(R.id.route_select_map);
+        mMapView = rootView.findViewById(R.id.route_select_map);
         Context ctx = getActivity().getApplicationContext();
         //important! set your user agent to prevent getting banned from the osm servers
         Configuration.getInstance().load(ctx, PreferenceManager.getDefaultSharedPreferences(ctx));
@@ -115,343 +102,347 @@ public class Route_Select extends Fragment implements View.OnClickListener {
         //지도 focus 부분
         mapController = mMapView.getController();
         mapController.setZoom(17.5);
-
-        //사용자 위치 gps 버튼
-//        getLocation();
-
         //Setting start and end points
         waypoints = new ArrayList<>();
         newGps = new GpsInfo(getActivity());
-       GeoPoint main = new GeoPoint(37.545933, 126.963772);
-        mapController.setCenter(main);
-        //마커 추가 코드
-        Marker startMarker = new Marker(mMapView);
-        Marker endMarker = new Marker(mMapView);
-        roadManager = new GraphHopperRoadManager("7d7c5e0b-8521-4a3c-8eec-9ede1047d099", true);
-        roadManager.addRequestOption("vehicle=foot");
-        GeoPoint longAndlat = null;
-        GeoPoint startPoint=null,endPoint=null;
-        if(important1 != null || important2 != null) {
+        if (newGps.isGetLocation()) {
 
-            switch (important1) {
-                case "명신관":
-                    longAndlat = new GeoPoint(37.545936, 126.963731);
-                    break;
-                case "새힘관":
-                    longAndlat = new GeoPoint(37.545936, 126.963731);
-                    break;
-                case "진리관":
-                    longAndlat = new GeoPoint(37.546265, 126.963767);
-                    break;
-                case "순헌관":
-                    longAndlat = new GeoPoint(37.546344, 126.964720);
-                    break;
-                case "행파관":
-                    longAndlat = new GeoPoint(37.546587, 126.964987);
-                    break;
-                case "교수 수련회관":
-                    longAndlat = new GeoPoint(37.546572, 126.964352);
-                    break;
-                case "학생회관":
-                    longAndlat = new GeoPoint(37.545372, 126.964929);
-                    break;
-                case "행정관":
-                    longAndlat = new GeoPoint(37.545476, 126.964672);
-                    break;
-                case "프라임관":
-                    longAndlat = new GeoPoint(37.544895, 126.964846);
-                    break;
-                case "음악대학":
-                    longAndlat = new GeoPoint(37.544267, 126.964235);
-                    break;
-                case "미술대학":
-                    longAndlat = new GeoPoint(37.544291, 126.964804);
-                    break;
-                case "사회대학":
-                    longAndlat = new GeoPoint(37.543887, 126.963995);
-                    break;
-                case "백주년 기념관":
-                    longAndlat = new GeoPoint(37.543930, 126.965277);
-                    break;
-                case "중앙 도서관":
-                    longAndlat = new GeoPoint(37.544177, 126.966092);
-                    break;
-                case "약학대학":
-                    longAndlat = new GeoPoint(37.543915, 126.964517);
-                    break;
-                case "과학관":
-                    longAndlat = new GeoPoint(37.544576, 126.966068);
-                    break;
-                default:
-                    break;
-            }
-            switch (important2) {
-                case "명신관":
-                    longAndlat = new GeoPoint(37.545936, 126.963731);
-                    break;
-                case "새힘관":
-                    longAndlat = new GeoPoint(37.545936, 126.963731);
-                    break;
-                case "진리관":
-                    longAndlat = new GeoPoint(37.546265, 126.963767);
-                    break;
-                case "순헌관":
-                    longAndlat = new GeoPoint(37.546344, 126.964720);
-                    break;
-                case "행파관":
-                    longAndlat = new GeoPoint(37.546587, 126.964987);
-                    break;
-                case "교수 수련회관":
-                    longAndlat = new GeoPoint(37.546572, 126.964352);
-                    break;
-                case "학생회관":
-                    longAndlat = new GeoPoint(37.545372, 126.964929);
-                    break;
-                case "행정관":
-                    longAndlat = new GeoPoint(37.545476, 126.964672);
-                    break;
-                case "프라임관":
-                    longAndlat = new GeoPoint(37.544895, 126.964846);
-                    break;
-                case "음악대학":
-                    longAndlat = new GeoPoint(37.544267, 126.964235);
-                    break;
-                case "미술대학":
-                    longAndlat = new GeoPoint(37.544291, 126.964804);
-                    break;
-                case "사회대학":
-                    longAndlat = new GeoPoint(37.543887, 126.963995);
-                    break;
-                case "백주년 기념관":
-                    longAndlat = new GeoPoint(37.543930, 126.965277);
-                    break;
-                case "중앙 도서관":
-                    longAndlat = new GeoPoint(37.544177, 126.966092);
-                    break;
-                case "약학대학":
-                    longAndlat = new GeoPoint(37.543915, 126.964517);
-                    break;
-                case "과학관":
-                    longAndlat = new GeoPoint(37.544576, 126.966068);
-                    break;
-                default:
-                    break;
-            }
-            //건물별 위경도값 가져오기
-            if (flag == 0) {
-                if(longAndlat!=null) {
-                    startPoint = longAndlat;
-                    mapController.setCenter(startPoint);
-                    waypoints.add(startPoint);
-                    startMarker.setIcon(ContextCompat.getDrawable(getActivity(),R.mipmap.ic_launcher));
-                    startMarker.setTitle("Start point");
-                }
-            } else if (flag == 1) {
-                if (longAndlat != null) {
-                    endPoint = longAndlat;
-                    waypoints.add(endPoint);
-                    endMarker.setPosition(endPoint);
-                    endMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-                    mMapView.getOverlays().add(endMarker);
-                }
-            }
-           if(startPoint!=null && endPoint!=null) {
-               road = roadManager.getRoad(waypoints);
-               //경로마다 점 찍어 주기
-               Drawable nodeIcon = getResources().getDrawable(R.drawable.marker_node);
-               for (int i = 0; i < road.mNodes.size(); i++) {
-                   RoadNode node = road.mNodes.get(i);
-                   Marker nodeMarker = new Marker(mMapView);
-                   nodeMarker.setPosition(node.mLocation);
-                   nodeMarker.setIcon(nodeIcon);
-                   nodeMarker.setSubDescription(Road.getLengthDurationText(this.getActivity(), node.mLength, node.mDuration));
-                   nodeMarker.setTitle("Step " + i);
-                   mMapView.getOverlays().add(nodeMarker);
-               }
-
-               Polyline roadOverlay = GraphHopperRoadManager.buildRoadOverlay(road);
-               mMapView.getOverlays().add(roadOverlay);
-               mMapView.invalidate();
-
-               if (road.mStatus != Road.STATUS_OK) {
-                   //handle error... warn the user, etc.
-               }
-           }
+        } else {
+            // GPS 를 사용할수 없으므로
+            newGps.showSettingsAlert();
         }
+        GeoPoint main = new GeoPoint(37.545605, 126.964523);
+        mapController.setCenter(main);
 
-//        mMapView.getOverlays().add(endMarker);
-        //map refresh
-        mMapView.invalidate();
-        //마커 클릭시 생기는 버블 안의 text
+        //User location Update
+        MyLocationNewOverlay locationOverlay;
+        locationOverlay = new MyLocationNewOverlay(new GpsMyLocationProvider(getContext()), mMapView);
+        locationOverlay.enableMyLocation();
+        mMapView.getOverlays().add(locationOverlay);
+            //마커 추가 코드
+            Marker startMarker = new Marker(mMapView);
+            Marker endMarker = new Marker(mMapView);
+            roadManager = new GraphHopperRoadManager("7d7c5e0b-8521-4a3c-8eec-9ede1047d099", true);
+            roadManager.addRequestOption("vehicle=foot");
+            GeoPoint longAndlat;
+            GeoPoint startPoint = null, endPoint = null;
+            if (important1 != null || important2 != null) {
+                switch (important1) {
+                    case "명신관":
+                        longAndlat = new GeoPoint(37.545936, 126.963731);
+                        break;
+                    case "새힘관":
+                        longAndlat = new GeoPoint(37.545936, 126.963731);
+                        break;
+                    case "진리관":
+                        longAndlat = new GeoPoint(37.546265, 126.963767);
+                        break;
+                    case "순헌관":
+                        longAndlat = new GeoPoint(37.546344, 126.964720);
+                        break;
+                    case "행파관":
+                        longAndlat = new GeoPoint(37.546587, 126.964987);
+                        break;
+                    case "교수 수련회관":
+                        longAndlat = new GeoPoint(37.546572, 126.964352);
+                        break;
+                    case "학생회관":
+                        longAndlat = new GeoPoint(37.545372, 126.964929);
+                        break;
+                    case "행정관":
+                        longAndlat = new GeoPoint(37.545476, 126.964672);
+                        break;
+                    case "프라임관":
+                        longAndlat = new GeoPoint(37.544895, 126.964846);
+                        break;
+                    case "음악대학":
+                        longAndlat = new GeoPoint(37.544267, 126.964235);
+                        break;
+                    case "미술대학":
+                        longAndlat = new GeoPoint(37.544291, 126.964804);
+                        break;
+                    case "사회대학":
+                        longAndlat = new GeoPoint(37.543887, 126.963995);
+                        break;
+                    case "백주년 기념관":
+                        longAndlat = new GeoPoint(37.543930, 126.965277);
+                        break;
+                    case "중앙 도서관":
+                        longAndlat = new GeoPoint(37.544177, 126.966092);
+                        break;
+                    case "약학대학":
+                        longAndlat = new GeoPoint(37.543915, 126.964517);
+                        break;
+                    case "과학관":
+                        longAndlat = new GeoPoint(37.544576, 126.966068);
+                        break;
+                    default:
+                        String[] array = important1.split(",");
+                        longAndlat = new GeoPoint(Double.valueOf(array[0]), Double.valueOf(array[1]));
+                        break;
+                }
+                switch (important2) {
+                    case "명신관":
+                        longAndlat = new GeoPoint(37.545936, 126.963731);
+                        break;
+                    case "새힘관":
+                        longAndlat = new GeoPoint(37.545936, 126.963731);
+                        break;
+                    case "진리관":
+                        longAndlat = new GeoPoint(37.546265, 126.963767);
+                        break;
+                    case "순헌관":
+                        longAndlat = new GeoPoint(37.546344, 126.964720);
+                        break;
+                    case "행파관":
+                        longAndlat = new GeoPoint(37.546587, 126.964987);
+                        break;
+                    case "교수 수련회관":
+                        longAndlat = new GeoPoint(37.546572, 126.964352);
+                        break;
+                    case "학생회관":
+                        longAndlat = new GeoPoint(37.545372, 126.964929);
+                        break;
+                    case "행정관":
+                        longAndlat = new GeoPoint(37.545476, 126.964672);
+                        break;
+                    case "프라임관":
+                        longAndlat = new GeoPoint(37.544895, 126.964846);
+                        break;
+                    case "음악대학":
+                        longAndlat = new GeoPoint(37.544267, 126.964235);
+                        break;
+                    case "미술대학":
+                        longAndlat = new GeoPoint(37.544291, 126.964804);
+                        break;
+                    case "사회대학":
+                        longAndlat = new GeoPoint(37.543887, 126.963995);
+                        break;
+                    case "백주년 기념관":
+                        longAndlat = new GeoPoint(37.543930, 126.965277);
+                        break;
+                    case "중앙 도서관":
+                        longAndlat = new GeoPoint(37.544177, 126.966092);
+                        break;
+                    case "약학대학":
+                        longAndlat = new GeoPoint(37.543915, 126.964517);
+                        break;
+                    case "과학관":
+                        longAndlat = new GeoPoint(37.544576, 126.966068);
+                        break;
+                    default:
+                        break;
+                }
+                //건물별 위경도값 가져오기
+                if (flag == 0) {
+                    if (longAndlat != null) {
+                        startPoint = longAndlat;
+                        mapController.setCenter(startPoint);
+                        waypoints.add(startPoint);
+                        startMarker.setIcon(ContextCompat.getDrawable(getActivity(), R.mipmap.ic_launcher));
+                        startMarker.setTitle("Start point");
+                    }
+                } else if (flag == 1) {
+                    if (longAndlat != null) {
+                        endPoint = longAndlat;
+                        waypoints.add(endPoint);
+                        endMarker.setPosition(endPoint);
+                        endMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+                        mMapView.getOverlays().add(endMarker);
+                    }
+                }
+                if (startPoint != null && endPoint != null) {
+                    road = roadManager.getRoad(waypoints);
+                    //경로마다 점 찍어 주기
+                    Drawable nodeIcon = getResources().getDrawable(R.drawable.marker_node);
+                    for (int i = 0; i < road.mNodes.size(); i++) {
+                        RoadNode node = road.mNodes.get(i);
+                        Marker nodeMarker = new Marker(mMapView);
+                        nodeMarker.setPosition(node.mLocation);
+                        nodeMarker.setIcon(nodeIcon);
+                        nodeMarker.setSubDescription(Road.getLengthDurationText(this.getActivity(), node.mLength, node.mDuration));
+                        nodeMarker.setTitle("Step " + i);
+                        mMapView.getOverlays().add(nodeMarker);
+                    }
 
+                    Polyline roadOverlay = GraphHopperRoadManager.buildRoadOverlay(road);
+                    mMapView.getOverlays().add(roadOverlay);
+                    mMapView.invalidate();
 
-
-        button = rootView.findViewById(R.id.route_button);
-
-       //출발도착 선정하러 가자
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i("******여기 첫번째 툴바","여기 왔당");
-                ((MainActivity) getActivity()).replaceFragment(4);
+                    if (road.mStatus != Road.STATUS_OK) {
+                        //handle error... warn the user, etc.
+                    }
+                }
             }
-        });
+
+            //map refresh
+            mMapView.invalidate();
+
+            button = rootView.findViewById(R.id.route_button);
+
+            //출발도착 선정하러 가자
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((MainActivity) getActivity()).replaceFragment(4);
+                }
+            });
+            mHandler.post(new Runnable() {
+                public void run() {
+                    Marker startMarker = new Marker(mMapView);
+                    Marker endMarker = new Marker(mMapView);
+                    GeoPoint longAndlat1 = null;
+                    GeoPoint longAndlat2 = null;
+                    GeoPoint startPoint = null, endPoint = null;
+                    if (important1 != null || important2 != null) {
+
+                        switch (important1) {
+                            case "명신관":
+                                longAndlat1 = new GeoPoint(37.545936, 126.963731);
+                                break;
+                            case "새힘관":
+                                longAndlat1 = new GeoPoint(37.545936, 126.963731);
+                                break;
+                            case "진리관":
+                                longAndlat1 = new GeoPoint(37.546265, 126.963767);
+                                break;
+                            case "순헌관":
+                                longAndlat1 = new GeoPoint(37.546344, 126.964720);
+                                break;
+                            case "행파관":
+                                longAndlat1 = new GeoPoint(37.546587, 126.964987);
+                                break;
+                            case "교수 수련회관":
+                                longAndlat1 = new GeoPoint(37.546572, 126.964352);
+                                break;
+                            case "학생회관":
+                                longAndlat1 = new GeoPoint(37.545372, 126.964929);
+                                break;
+                            case "행정관":
+                                longAndlat1 = new GeoPoint(37.545476, 126.964672);
+                                break;
+                            case "프라임관":
+                                longAndlat1 = new GeoPoint(37.544895, 126.964846);
+                                break;
+                            case "음악대학":
+                                longAndlat1 = new GeoPoint(37.544267, 126.964235);
+                                break;
+                            case "미술대학":
+                                longAndlat1 = new GeoPoint(37.544291, 126.964804);
+                                break;
+                            case "사회대학":
+                                longAndlat1 = new GeoPoint(37.543887, 126.963995);
+                                break;
+                            case "백주년 기념관":
+                                longAndlat1 = new GeoPoint(37.543930, 126.965277);
+                                break;
+                            case "중앙 도서관":
+                                longAndlat1 = new GeoPoint(37.544177, 126.966092);
+                                break;
+                            case "약학대학":
+                                longAndlat1 = new GeoPoint(37.543915, 126.964517);
+                                break;
+                            case "과학관":
+                                longAndlat1 = new GeoPoint(37.544576, 126.966068);
+                                break;
+                            default:
+                                break;
+                        }
+                        switch (important2) {
+                            case "명신관":
+                                longAndlat2 = new GeoPoint(37.545936, 126.963731);
+                                break;
+                            case "새힘관":
+                                longAndlat2 = new GeoPoint(37.545936, 126.963731);
+                                break;
+                            case "진리관":
+                                longAndlat2 = new GeoPoint(37.546265, 126.963767);
+                                break;
+                            case "순헌관":
+                                longAndlat2 = new GeoPoint(37.546344, 126.964720);
+                                break;
+                            case "행파관":
+                                longAndlat2 = new GeoPoint(37.546587, 126.964987);
+                                break;
+                            case "교수 수련회관":
+                                longAndlat2 = new GeoPoint(37.546572, 126.964352);
+                                break;
+                            case "학생회관":
+                                longAndlat2 = new GeoPoint(37.545372, 126.964929);
+                                break;
+                            case "행정관":
+                                longAndlat2 = new GeoPoint(37.545476, 126.964672);
+                                break;
+                            case "프라임관":
+                                longAndlat2 = new GeoPoint(37.544895, 126.964846);
+                                break;
+                            case "음악대학":
+                                longAndlat2 = new GeoPoint(37.544267, 126.964235);
+                                break;
+                            case "미술대학":
+                                longAndlat2 = new GeoPoint(37.544291, 126.964804);
+                                break;
+                            case "사회대학":
+                                longAndlat2 = new GeoPoint(37.543887, 126.963995);
+                                break;
+                            case "백주년 기념관":
+                                longAndlat2 = new GeoPoint(37.543930, 126.965277);
+                                break;
+                            case "중앙 도서관":
+                                longAndlat2 = new GeoPoint(37.544177, 126.966092);
+                                break;
+                            case "약학대학":
+                                longAndlat2 = new GeoPoint(37.543915, 126.964517);
+                                break;
+                            case "과학관":
+                                longAndlat2 = new GeoPoint(37.544576, 126.966068);
+                                break;
+                            default:
+                                break;
+                        }
+                        //건물별 위경도값 가져오기
+
+                        if (longAndlat1 != null && longAndlat2 != null) {
+                            startPoint = longAndlat1;
+                            mapController.setCenter(startPoint);
+                            waypoints.add(startPoint);
+                            startMarker.setIcon(ContextCompat.getDrawable(getActivity(), R.mipmap.ic_launcher));
+                            startMarker.setTitle("Start point");
+                            endPoint = longAndlat2;
+                            waypoints.add(endPoint);
+                            endMarker.setPosition(endPoint);
+                            endMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+                            mMapView.getOverlays().add(endMarker);
+                        }
+                    }
+                    if (startPoint != null && endPoint != null) {
+                        road = roadManager.getRoad(waypoints);
+                        //경로마다 점 찍어 주기
+                        Drawable nodeIcon = getResources().getDrawable(R.drawable.marker_node);
+                        for (int i = 0; i < road.mNodes.size(); i++) {
+                            RoadNode node = road.mNodes.get(i);
+                            Marker nodeMarker = new Marker(mMapView);
+                            nodeMarker.setPosition(node.mLocation);
+                            nodeMarker.setIcon(nodeIcon);
+                            nodeMarker.setSubDescription(Road.getLengthDurationText(getActivity(), node.mLength, node.mDuration));
+                            nodeMarker.setTitle("Step " + i);
+                            mMapView.getOverlays().add(nodeMarker);
+                        }
+
+                        Polyline roadOverlay = GraphHopperRoadManager.buildRoadOverlay(road);
+                        mMapView.getOverlays().add(roadOverlay);
+                        mMapView.invalidate();
+
+                        if (road.mStatus != Road.STATUS_OK) {
+                            //handle error... warn the user, etc.
+                        }
+                    }
+                    mMapView.invalidate();
+                }
+            });
+            callPermission();
 
 
-        mHandler.post(new Runnable() {
-                        public void run() {
-                            Marker startMarker = new Marker(mMapView);
-                            Marker endMarker = new Marker(mMapView);
-                            GeoPoint longAndlat1 = null;
-                            GeoPoint longAndlat2 = null;
-                            GeoPoint startPoint=null,endPoint=null;
-                            if(important1 != null || important2 != null) {
-
-                                switch (important1) {
-                                    case "명신관":
-                                        longAndlat1 = new GeoPoint(37.545936, 126.963731);
-                                        break;
-                                    case "새힘관":
-                                        longAndlat1 = new GeoPoint(37.545936, 126.963731);
-                                        break;
-                                    case "진리관":
-                                        longAndlat1 = new GeoPoint(37.546265, 126.963767);
-                                        break;
-                                    case "순헌관":
-                                        longAndlat1 = new GeoPoint(37.546344, 126.964720);
-                                        break;
-                                    case "행파관":
-                                        longAndlat1 = new GeoPoint(37.546587, 126.964987);
-                                        break;
-                                    case "교수 수련회관":
-                                        longAndlat1 = new GeoPoint(37.546572, 126.964352);
-                                        break;
-                                    case "학생회관":
-                                        longAndlat1 = new GeoPoint(37.545372, 126.964929);
-                                        break;
-                                    case "행정관":
-                                        longAndlat1 = new GeoPoint(37.545476, 126.964672);
-                                        break;
-                                    case "프라임관":
-                                        longAndlat1 = new GeoPoint(37.544895, 126.964846);
-                                        break;
-                                    case "음악대학":
-                                        longAndlat1 = new GeoPoint(37.544267, 126.964235);
-                                        break;
-                                    case "미술대학":
-                                        longAndlat1 = new GeoPoint(37.544291, 126.964804);
-                                        break;
-                                    case "사회대학":
-                                        longAndlat1 = new GeoPoint(37.543887, 126.963995);
-                                        break;
-                                    case "백주년 기념관":
-                                        longAndlat1 = new GeoPoint(37.543930, 126.965277);
-                                        break;
-                                    case "중앙 도서관":
-                                        longAndlat1 = new GeoPoint(37.544177, 126.966092);
-                                        break;
-                                    case "약학대학":
-                                        longAndlat1 = new GeoPoint(37.543915, 126.964517);
-                                        break;
-                                    case "과학관":
-                                        longAndlat1 = new GeoPoint(37.544576, 126.966068);
-                                        break;
-                                    default:
-                                        break;
-                                }
-                                switch (important2) {
-                                    case "명신관":
-                                        longAndlat2 = new GeoPoint(37.545936, 126.963731);
-                                        break;
-                                    case "새힘관":
-                                        longAndlat2 = new GeoPoint(37.545936, 126.963731);
-                                        break;
-                                    case "진리관":
-                                        longAndlat2 = new GeoPoint(37.546265, 126.963767);
-                                        break;
-                                    case "순헌관":
-                                        longAndlat2 = new GeoPoint(37.546344, 126.964720);
-                                        break;
-                                    case "행파관":
-                                        longAndlat2 = new GeoPoint(37.546587, 126.964987);
-                                        break;
-                                    case "교수 수련회관":
-                                        longAndlat2 = new GeoPoint(37.546572, 126.964352);
-                                        break;
-                                    case "학생회관":
-                                        longAndlat2 = new GeoPoint(37.545372, 126.964929);
-                                        break;
-                                    case "행정관":
-                                        longAndlat2 = new GeoPoint(37.545476, 126.964672);
-                                        break;
-                                    case "프라임관":
-                                        longAndlat2 = new GeoPoint(37.544895, 126.964846);
-                                        break;
-                                    case "음악대학":
-                                        longAndlat2 = new GeoPoint(37.544267, 126.964235);
-                                        break;
-                                    case "미술대학":
-                                        longAndlat2 = new GeoPoint(37.544291, 126.964804);
-                                        break;
-                                    case "사회대학":
-                                        longAndlat2 = new GeoPoint(37.543887, 126.963995);
-                                        break;
-                                    case "백주년 기념관":
-                                        longAndlat2 = new GeoPoint(37.543930, 126.965277);
-                                        break;
-                                    case "중앙 도서관":
-                                        longAndlat2 = new GeoPoint(37.544177, 126.966092);
-                                        break;
-                                    case "약학대학":
-                                        longAndlat2 = new GeoPoint(37.543915, 126.964517);
-                                        break;
-                                    case "과학관":
-                                        longAndlat2 = new GeoPoint(37.544576, 126.966068);
-                                        break;
-                                    default:
-                                        break;
-                                }
-                                //건물별 위경도값 가져오기
-
-                                if(longAndlat1!=null&&longAndlat2!=null) {
-                                    startPoint = longAndlat1;
-                                    mapController.setCenter(startPoint);
-                                    waypoints.add(startPoint);
-                                    startMarker.setIcon(ContextCompat.getDrawable(getActivity(),R.mipmap.ic_launcher));
-                                    startMarker.setTitle("Start point");
-                                    endPoint = longAndlat2;
-                                    waypoints.add(endPoint);
-                                    endMarker.setPosition(endPoint);
-                                    endMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
-                                    mMapView.getOverlays().add(endMarker);
-                                }
-                            }
-                            if(startPoint!=null && endPoint!=null) {
-                                road = roadManager.getRoad(waypoints);
-                                //경로마다 점 찍어 주기
-                                Drawable nodeIcon = getResources().getDrawable(R.drawable.marker_node);
-                                for (int i = 0; i < road.mNodes.size(); i++) {
-                                    RoadNode node = road.mNodes.get(i);
-                                    Marker nodeMarker = new Marker(mMapView);
-                                    nodeMarker.setPosition(node.mLocation);
-                                    nodeMarker.setIcon(nodeIcon);
-                                    nodeMarker.setSubDescription(Road.getLengthDurationText(getActivity(), node.mLength, node.mDuration));
-                                    nodeMarker.setTitle("Step " + i);
-                                    mMapView.getOverlays().add(nodeMarker);
-                                }
-
-                                Polyline roadOverlay = GraphHopperRoadManager.buildRoadOverlay(road);
-                                mMapView.getOverlays().add(roadOverlay);
-                                mMapView.invalidate();
-
-                                if (road.mStatus != Road.STATUS_OK) {
-                                    //handle error... warn the user, etc.
-                                }
-                            }
-                            mMapView.invalidate();
-            }
-        });
-        callPermission();
         return rootView;
     }
 
@@ -461,113 +452,7 @@ public class Route_Select extends Fragment implements View.OnClickListener {
     }
 
 
-//    //gps 켜져있는지 확인
-//    private void gpsCheck() {
-//        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-//        builder.setMessage("계속하려면 위치 기능 설정이 필요합니다.")
-//                .setCancelable(false)
-//                .setPositiveButton("확인",
-//                        new DialogInterface.OnClickListener() {
-//                            public void onClick(DialogInterface dialog, int id) {
-//                                turnOnGps();
-//                            }
-//                        })
-//                .setNegativeButton("아니요",
-//                        new DialogInterface.OnClickListener() {
-//                            public void onClick(DialogInterface dialog, int id) {
-//                                dialog.cancel();
-//                            }
-//                        });
-//        AlertDialog alert = builder.create();
-//        alert.show();
-//    }
-//    // show GPS Options
-//    private void turnOnGps() {
-//        Intent gpsOptionsIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-//        startActivity(gpsOptionsIntent);
-//    }
-//
-//    //user location marker function
-//    public void drawMarker(double latitude,double longitude){
-//        Drawable nodeIcon = getResources().getDrawable(R.drawable.button_bg);
-//        //Marker currentLocation = new Marker(mMapView);
-//        if(currentLocation != null) currentLocation.remove(mMapView);
-//
-//
-//        currentLocation = new Marker(mMapView);
-//        currentLocation.setIcon(nodeIcon);
-//        currentLocation.setPosition(new GeoPoint(latitude,longitude));
-//        mMapView.getOverlays().add(currentLocation);
-//
-//    }
-//
-//    //gps 표시 함수
-//    final LocationListener gpsLocationListener = new LocationListener() {
-//        public void onLocationChanged(Location location) {
-//
-//            double longitude = location.getLongitude();
-//            double latitude = location.getLatitude();
-//
-//            drawMarker(latitude,longitude);
-//
-//        }
-//
-//        public void onStatusChanged(String provider, int status, Bundle extras) {
-//        }
-//
-//        public void onProviderEnabled(String provider) {
-//        }
-//
-//        public void onProviderDisabled(String provider) {
-//        }
-//    };
-//
-//    //currentLocation 확인 및 마커 표시 함수
-//    public void getLocation(){
-//
-//        final LocationManager lm = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
-//
-//        Log.i(TAG, "1");
-//        if ( Build.VERSION.SDK_INT >= 23 &&
-//                ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
-//            Log.i(TAG, "2");
-//            ActivityCompat.requestPermissions( getActivity(), new String[] {  android.Manifest.permission.ACCESS_FINE_LOCATION  },
-//                    0 );
-//        }
-//        else{
-//
-//            Log.i(TAG, "mygps is working well in tourview");
-//
-//            String provider = LocationManager.NETWORK_PROVIDER;
-//
-//            Location location = lm.getLastKnownLocation(provider);
-//
-//            while (location == null) {
-//                location = lm.getLastKnownLocation(provider);
-//            }
-//
-//            double longitude = location.getLongitude();
-//            double latitude = location.getLatitude();
-//
-//            drawMarker(latitude,longitude);
-//
-//
-//            Log.i(TAG, "marker code is read.");
-//
-//            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-//                    500,
-//                    1,
-//                    gpsLocationListener);
-//            lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-//                    500,
-//                    1,
-//                    gpsLocationListener);
-//
-//        }
-//
-//        Log.i(TAG, "3");
 
-//    }
 
     @Override
     public void onPause() {
@@ -780,11 +665,6 @@ public class Route_Select extends Fragment implements View.OnClickListener {
 
                     double latitude = newGps.getLatitude();
                     double longitude = newGps.getLongitude();
-
-                    Toast.makeText(
-                            getActivity(),
-                            "당신의 위치 - \n위도: " + latitude + "\n경도: " + longitude,
-                            Toast.LENGTH_LONG).show();
                 } else {
                     // GPS 를 사용할수 없으므로
                     newGps.showSettingsAlert();
